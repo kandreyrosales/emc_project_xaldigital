@@ -1,0 +1,6 @@
+app/utils/.terraform
+app/utils/.terraform.lock.hcl
+app/utils/terraform.tfstate
+app/utils/terraform.tfstate.backup
+app/utils/variables.tf
+.idea/
