@@ -11,8 +11,8 @@ function generateSecretHash(email, clientId, clientSecret) {
 
 async function signIn(event) {
     const { email, password } = JSON.parse(event.body);
-    const clientId = process.env.CLIENT_ID;
-    const clientSecret = process.env.CLIENT_SECRET;
+    const clientId = process.env.clientId;
+    const clientSecret = process.env.clientSecret;
     const secretHash = generateSecretHash(email, clientId, clientSecret);
 
     const params = {

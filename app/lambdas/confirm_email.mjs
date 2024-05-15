@@ -11,8 +11,8 @@ const client = new CognitoIdentityProviderClient({ region: "us-east-1" });
 
 async function confirmSignUp(event) {
     const { username, confirmationCode } = JSON.parse(event.body);
-    const clientId = process.env.CLIENT_ID;
-    const clientSecret = process.env.CLIENT_SECRET;
+    const clientId = process.env.clientId;
+    const clientSecret = process.env.clientSecret;
 
     const secretHash = generateSecretHash(username, clientId, clientSecret);
 

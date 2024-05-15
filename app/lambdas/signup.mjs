@@ -10,15 +10,10 @@ function generateSecretHash(username, clientId, clientSecret) {
 }
 async function signUp(event) {
     const body = JSON.parse(event.body);
-    // console.log(body)
 
-    const { email, password } = body;
-    const clientId = '1un8b5lbgr1jltsss8q8e3cit2';
-    const clientSecret = 'vbaff0prl9jc829endi6u7mr5l3mq4l11scfk0jn1528dc0na7v';
-
-    //     環境変数での実装は以下。設定->環境変数から値を設定してください。
-    //     const clientId = process.env.CLIENT_ID;
-    //     const clientSecret = process.env.CLIENT_SECRET;
+    const { email, password, fullname, medical_specialty, professional_id, residence_age, hospital, doctor_name } = body;
+    const clientId = process.env.clientId;
+    const clientSecret = process.env.clientSecret;
 
     const secretHash = generateSecretHash(email, clientId, clientSecret);
 
@@ -31,7 +26,31 @@ async function signUp(event) {
             {
                 Name: "email",
                 Value: email
-            }
+            },
+            {
+                Name: "fullname",
+                Value: fullname
+            },
+            {
+                Name: "medical_specialty",
+                Value: medical_specialty
+            },
+            {
+                Name: "professional_id",
+                Value: professional_id
+            },
+            {
+                Name: "residence_age",
+                Value: residence_age
+            },
+            {
+                Name: "hospital",
+                Value: hospital
+            },
+            {
+                Name: "doctor_name",
+                Value: doctor_name
+            },
         ]
     };
 
