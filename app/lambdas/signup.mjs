@@ -9,9 +9,17 @@ function generateSecretHash(username, clientId, clientSecret) {
                  .digest('base64');
 }
 async function signUp(event) {
-    const body = JSON.parse(event.body);
+    const parsedData = JSON.parse(event.body);
 
-    const { email, password, fullname, medical_specialty, professional_id, residence_age, hospital, doctor_name } = body;
+    const email = parsedData.email;
+    const password = parsedData.password;
+    const fullname = parsedData.fullname;
+    const medical_specialty = parsedData.medical_specialty;
+    const professional_id = parsedData.professional_id;
+    const residence_age = parsedData.residence_age;
+    const hospital = parsedData.hospital;
+    const doctor_name = parsedData.doctor_name;
+
     const clientId = process.env.clientId;
     const clientSecret = process.env.clientSecret;
 
@@ -28,29 +36,29 @@ async function signUp(event) {
                 Value: email
             },
             {
-                Name: "fullname",
+                Name: "custom:fullname",
                 Value: fullname
             },
             {
-                Name: "medical_specialty",
+                Name: "custom:medical_specialty",
                 Value: medical_specialty
             },
             {
-                Name: "professional_id",
+                Name: "custom:professional_id",
                 Value: professional_id
             },
             {
-                Name: "residence_age",
+                Name: "custom:residence_age",
                 Value: residence_age
             },
             {
-                Name: "hospital",
+                Name: "custom:hospital",
                 Value: hospital
             },
             {
-                Name: "doctor_name",
+                Name: "custom:doctor_name",
                 Value: doctor_name
-            },
+            }
         ]
     };
 

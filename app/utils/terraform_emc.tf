@@ -44,7 +44,7 @@ resource "aws_cognito_user_pool" "emc_user_pool" {
   }
 
   schema {
-    attribute_data_type = "Number"
+    attribute_data_type = "String"
     name                = "residence_age"
     required            = false
     mutable             = true
@@ -109,6 +109,15 @@ resource "aws_iam_policy" "cognito_list_emc_users_policy" {
         Effect   = "Allow"
         Action   = "cognito-idp:ListUsers"
         Resource = "arn:aws:cognito-idp:${var.region_aws}:${var.aws_account_number}:userpool/${aws_cognito_user_pool.emc_user_pool.id}"
+      },
+      {
+        "Action": [
+           "logs:CreateLogGroup",
+           "logs:CreateLogStream",
+           "logs:PutLogEvents"
+        ],
+        "Resource": "arn:aws:logs:*:*:*",
+        "Effect": "Allow"
       }
     ]
   })
@@ -136,7 +145,7 @@ data "archive_file" "lambda_zip" {
 resource "aws_lambda_function" "signup" {
   function_name    = "signup"
   role             = aws_iam_role.lambda_role_emc.arn
-  handler          = "signup.lambda_handler"
+  handler          = "signup.handler"
   runtime          = "nodejs20.x"
   filename         = data.archive_file.lambda_zip.output_path  # Path to the ZIP archive of Lambda function code
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
@@ -148,12 +157,18 @@ resource "aws_lambda_function" "signup" {
     }
   }
 }
+resource "aws_lambda_function_url" "lambda_url_signup" {
+  function_name = aws_lambda_function.signup.arn
+  authorization_type = "NONE"
+}
+
+
 
 # Define Lambda function SignIn
 resource "aws_lambda_function" "signin" {
   function_name    = "signin"
   role             = aws_iam_role.lambda_role_emc.arn
-  handler          = "lambda-insights.lambda_handler"
+  handler          = "signin.handler"
   runtime          = "nodejs20.x"
   filename         = data.archive_file.lambda_zip.output_path  # Path to the ZIP archive of Lambda function code
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
@@ -164,4 +179,29 @@ resource "aws_lambda_function" "signin" {
       clientSecret = aws_cognito_user_pool_client.mobile_emc_client.client_secret
     }
   }
+}
+resource "aws_lambda_function_url" "lambda_url_signin" {
+  function_name = aws_lambda_function.signin.arn
+  authorization_type = "NONE"
+}
+
+# Define Lambda function confirm Email
+resource "aws_lambda_function" "confirm_email" {
+  function_name    = "confirm_email"
+  role             = aws_iam_role.lambda_role_emc.arn
+  handler          = "confirm_email.handler"
+  runtime          = "nodejs20.x"
+  filename         = data.archive_file.lambda_zip.output_path  # Path to the ZIP archive of Lambda function code
+  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+
+  environment {
+    variables = {
+      clientId = aws_cognito_user_pool_client.mobile_emc_client.id
+      clientSecret = aws_cognito_user_pool_client.mobile_emc_client.client_secret
+    }
+  }
+}
+resource "aws_lambda_function_url" "lambda_url_confirm_email" {
+  function_name = aws_lambda_function.confirm_email.arn
+  authorization_type = "NONE"
 }
