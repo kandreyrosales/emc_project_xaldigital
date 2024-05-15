@@ -205,3 +205,66 @@ resource "aws_lambda_function_url" "lambda_url_confirm_email" {
   function_name = aws_lambda_function.confirm_email.arn
   authorization_type = "NONE"
 }
+
+# Define Lambda function resend Code
+resource "aws_lambda_function" "resend_code" {
+  function_name    = "resend_code"
+  role             = aws_iam_role.lambda_role_emc.arn
+  handler          = "resend_code.handler"
+  runtime          = "nodejs20.x"
+  filename         = data.archive_file.lambda_zip.output_path  # Path to the ZIP archive of Lambda function code
+  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+
+  environment {
+    variables = {
+      clientId = aws_cognito_user_pool_client.mobile_emc_client.id
+      clientSecret = aws_cognito_user_pool_client.mobile_emc_client.client_secret
+    }
+  }
+}
+resource "aws_lambda_function_url" "lambda_url_resend_code" {
+  function_name = aws_lambda_function.resend_code.arn
+  authorization_type = "NONE"
+}
+
+# Define Lambda function Forgot Password
+resource "aws_lambda_function" "forgot_password" {
+  function_name    = "forgot_password"
+  role             = aws_iam_role.lambda_role_emc.arn
+  handler          = "forgot_password.handler"
+  runtime          = "nodejs20.x"
+  filename         = data.archive_file.lambda_zip.output_path  # Path to the ZIP archive of Lambda function code
+  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+
+  environment {
+    variables = {
+      clientId = aws_cognito_user_pool_client.mobile_emc_client.id
+      clientSecret = aws_cognito_user_pool_client.mobile_emc_client.client_secret
+    }
+  }
+}
+resource "aws_lambda_function_url" "lambda_url_forgot_password" {
+  function_name = aws_lambda_function.forgot_password.arn
+  authorization_type = "NONE"
+}
+
+# Define Lambda function Confirm Forgot Password
+resource "aws_lambda_function" "confirm_forgot_password" {
+  function_name    = "confirm_forgot_password"
+  role             = aws_iam_role.lambda_role_emc.arn
+  handler          = "confirm_forgot_password.handler"
+  runtime          = "nodejs20.x"
+  filename         = data.archive_file.lambda_zip.output_path  # Path to the ZIP archive of Lambda function code
+  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+
+  environment {
+    variables = {
+      clientId = aws_cognito_user_pool_client.mobile_emc_client.id
+      clientSecret = aws_cognito_user_pool_client.mobile_emc_client.client_secret
+    }
+  }
+}
+resource "aws_lambda_function_url" "lambda_url_confirm_forgot_password" {
+  function_name = aws_lambda_function.confirm_forgot_password.arn
+  authorization_type = "NONE"
+}
