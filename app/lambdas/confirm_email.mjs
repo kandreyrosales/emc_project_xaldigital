@@ -28,14 +28,26 @@ async function confirmSignUp(event) {
         await client.send(command);
         return {
             statusCode: 200,
+            headers: {
+                    "Access-Control-Allow-Origin" : "*", // Required for CORS support to work
+                    "Access-Control-Allow-Credentials" : true // Required for cookies, authorization headers with HTTPS
+                },
             body: JSON.stringify({ message: "Signup confirmed successfully." })
-        };
+        }
     } catch (error) {
         console.error(error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: error.message })
-        };
+                headers: {
+                    "Access-Control-Allow-Origin" : "*", // Required for CORS support to work
+                    "Access-Control-Allow-Credentials" : true // Required for cookies, authorization headers with HTTPS
+                },
+                body: JSON.stringify({
+                    statusCode: 500,
+                    error: 'Internal Server Error',
+                    internalError: JSON.stringify({ error: error.message }),
+                }),
+        }
     }
 }
 

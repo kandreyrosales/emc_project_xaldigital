@@ -268,3 +268,155 @@ resource "aws_lambda_function_url" "lambda_url_confirm_forgot_password" {
   function_name = aws_lambda_function.confirm_forgot_password.arn
   authorization_type = "NONE"
 }
+
+# Define Lambda function GetUserInfo
+resource "aws_lambda_function" "get_user_info" {
+  function_name    = "get_user_info"
+  role             = aws_iam_role.lambda_role_emc.arn
+  handler          = "get_user_info.handler"
+  runtime          = "nodejs20.x"
+  filename         = data.archive_file.lambda_zip.output_path  # Path to the ZIP archive of Lambda function code
+  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+}
+resource "aws_lambda_function_url" "lambda_url_get_user_info" {
+  function_name = aws_lambda_function.get_user_info.arn
+  authorization_type = "NONE"
+}
+
+# Define Lambda function Logout
+resource "aws_lambda_function" "logout" {
+  function_name    = "logout"
+  role             = aws_iam_role.lambda_role_emc.arn
+  handler          = "logout.handler"
+  runtime          = "nodejs20.x"
+  filename         = data.archive_file.lambda_zip.output_path  # Path to the ZIP archive of Lambda function code
+  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+}
+resource "aws_lambda_function_url" "lambda_url_logout" {
+  function_name = aws_lambda_function.logout.arn
+  authorization_type = "NONE"
+}
+
+resource "aws_api_gateway_rest_api" "emc_api" {
+  name = "emc_api"
+
+  endpoint_configuration {
+    types = ["REGIONAL"] # Exposes the API publicly
+  }
+}
+
+resource "aws_api_gateway_resource" "api_resource_emc_login" {
+  rest_api_id = aws_api_gateway_rest_api.emc_api.id
+  parent_id    = aws_api_gateway_rest_api.emc_api.root_resource_id
+  path_part    = "login" # Replace with your desired path
+
+  depends_on = [aws_api_gateway_rest_api.emc_api]
+}
+
+resource "aws_api_gateway_method" "api_method_login" {
+  rest_api_id   = aws_api_gateway_rest_api.emc_api.id
+  resource_id   = aws_api_gateway_resource.api_resource_emc_login.id
+  http_method   = "POST"
+  authorization = "NONE"
+}
+
+resource "aws_lambda_permission" "api_gateway_permission_login" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.signin.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.emc_api.execution_arn}/*/*"
+}
+
+resource "aws_api_gateway_integration" "lambda_integration_login" {
+  rest_api_id = aws_api_gateway_rest_api.emc_api.id
+  resource_id = aws_api_gateway_resource.api_resource_emc_login.id
+  http_method = aws_api_gateway_method.api_method_login.http_method
+  type        = "AWS_PROXY"
+  uri         = aws_lambda_function.signin.invoke_arn
+  integration_http_method = "POST"
+}
+
+####### SIGNUP #########
+resource "aws_api_gateway_resource" "api_resource_signup_emc" {
+  rest_api_id = aws_api_gateway_rest_api.emc_api.id
+  parent_id    = aws_api_gateway_rest_api.emc_api.root_resource_id
+  path_part    = "signup" # Replace with your desired path
+
+  depends_on = [aws_api_gateway_rest_api.emc_api]
+}
+
+resource "aws_api_gateway_method" "api_method_signup" {
+  rest_api_id   = aws_api_gateway_rest_api.emc_api.id
+  resource_id   = aws_api_gateway_resource.api_resource_signup_emc.id
+  http_method   = "POST"
+  authorization = "NONE"
+}
+
+resource "aws_lambda_permission" "api_gateway_permission_signup" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.signup.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.emc_api.execution_arn}/*/*"
+}
+
+resource "aws_api_gateway_integration" "lambda_integration_signup" {
+  rest_api_id = aws_api_gateway_rest_api.emc_api.id
+  resource_id = aws_api_gateway_resource.api_resource_signup_emc.id
+  http_method = aws_api_gateway_method.api_method_signup.http_method
+  type        = "AWS_PROXY"
+  uri         = aws_lambda_function.signup.invoke_arn
+  integration_http_method = "POST"
+}
+########
+
+#### LOGOUT #####
+resource "aws_api_gateway_resource" "api_resource_logout_emc" {
+  rest_api_id = aws_api_gateway_rest_api.emc_api.id
+  parent_id    = aws_api_gateway_rest_api.emc_api.root_resource_id
+  path_part    = "signup" # Replace with your desired path
+
+  depends_on = [aws_api_gateway_rest_api.emc_api]
+}
+
+resource "aws_api_gateway_method" "api_method_logout" {
+  rest_api_id   = aws_api_gateway_rest_api.emc_api.id
+  resource_id   = aws_api_gateway_resource.api_resource_logout_emc.id
+  http_method   = "POST"
+  authorization = "NONE"
+}
+
+resource "aws_lambda_permission" "api_gateway_permission_logout" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.logout.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.emc_api.execution_arn}/*/*"
+}
+
+resource "aws_api_gateway_integration" "lambda_integration_logout" {
+  rest_api_id = aws_api_gateway_rest_api.emc_api.id
+  resource_id = aws_api_gateway_resource.api_resource_logout_emc.id
+  http_method = aws_api_gateway_method.api_method_logout.http_method
+  type        = "AWS_PROXY"
+  uri         = aws_lambda_function.logout.invoke_arn
+  integration_http_method = "POST"
+}
+########
+
+
+
+resource "aws_api_gateway_deployment" "api_deployment" {
+  depends_on = [
+    aws_api_gateway_integration.lambda_integration_login,
+    aws_api_gateway_integration.lambda_integration_signup,
+    aws_api_gateway_integration.lambda_integration_logout,
+  ]
+  rest_api_id = aws_api_gateway_rest_api.emc_api.id
+  stage_name  = "prod"
+}
+
+output "api_url" {
+  value = "${aws_api_gateway_deployment.api_deployment.invoke_url}/login"
+}

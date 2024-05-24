@@ -1,29 +1,13 @@
-import { CognitoIdentityProviderClient, ResendConfirmationCodeCommand } from "@aws-sdk/client-cognito-identity-provider";
-import crypto from 'crypto';
-
+import { CognitoIdentityProviderClient, GlobalSignOutCommand } from "@aws-sdk/client-cognito-identity-provider"; // ES Modules import
 const client = new CognitoIdentityProviderClient({ region: "us-east-1" });
 
-function generateSecretHash(username, clientId, clientSecret) {
-    return crypto.createHmac('SHA256', clientSecret)
-                 .update(username + clientId)
-                 .digest('base64');
-}
-
-async function resend_code(event) {
-    const { username } = JSON.parse(event.body);
-    const clientId = process.env.clientId;
-    const clientSecret = process.env.clientSecret;
-
-    const secretHash = generateSecretHash(username, clientId, clientSecret);
-
-    const params = {
-        ClientId: clientId,
-        SecretHash: secretHash,
-        Username: username
+async function signOut(event) {
+    const { access_token } = JSON.parse(event.body);
+    const input = { // GetUserRequest
+        AccessToken: access_token, // required
     };
-
     try {
-        const command = new ResendConfirmationCodeCommand(params);
+        const command = new GlobalSignOutCommand(input);
         const response = await client.send(command);
         return {
             statusCode: 200,
@@ -31,7 +15,7 @@ async function resend_code(event) {
                     "Access-Control-Allow-Origin" : "*", // Required for CORS support to work
                     "Access-Control-Allow-Credentials" : true // Required for cookies, authorization headers with HTTPS
                 },
-            body: JSON.stringify({ message: response })
+            body: JSON.stringify(response)
         }
     } catch (error) {
         console.error(error);
@@ -50,4 +34,6 @@ async function resend_code(event) {
     }
 }
 
-export { resend_code as handler };
+export { signOut as handler };
+
+

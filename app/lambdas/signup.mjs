@@ -67,10 +67,27 @@ async function signUp(event) {
     try {
         const data = await client.send(command);
         console.log(data);
-        return { status: 'SUCCESS', data: data };
+        return {
+            statusCode: 200,
+            headers: {
+                    "Access-Control-Allow-Origin" : "*", // Required for CORS support to work
+                    "Access-Control-Allow-Credentials" : true // Required for cookies, authorization headers with HTTPS
+                },
+            body: JSON.stringify(data)
+        }
     } catch (error) {
-        console.error(error);
-        return { status: 'ERROR', error: error };
+        return {
+            statusCode: 500,
+                headers: {
+                    "Access-Control-Allow-Origin" : "*", // Required for CORS support to work
+                    "Access-Control-Allow-Credentials" : true // Required for cookies, authorization headers with HTTPS
+                },
+                body: JSON.stringify({
+                    statusCode: 500,
+                    error: 'Internal Server Error',
+                    internalError: JSON.stringify(error),
+                }),
+        }
     }
 }
 
