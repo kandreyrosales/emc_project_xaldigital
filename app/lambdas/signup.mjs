@@ -71,7 +71,8 @@ async function signUp(event) {
             statusCode: 200,
             headers: {
                     "Access-Control-Allow-Origin" : "*", // Required for CORS support to work
-                    "Access-Control-Allow-Credentials" : true // Required for cookies, authorization headers with HTTPS
+                    "Access-Control-Allow-Credentials" : true, // Required for cookies, authorization headers with HTTPS
+                    'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
                 },
             body: JSON.stringify(data)
         }
@@ -80,7 +81,8 @@ async function signUp(event) {
             statusCode: 500,
                 headers: {
                     "Access-Control-Allow-Origin" : "*", // Required for CORS support to work
-                    "Access-Control-Allow-Credentials" : true // Required for cookies, authorization headers with HTTPS
+                    "Access-Control-Allow-Credentials" : true, // Required for cookies, authorization headers with HTTPS
+                    'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
                 },
                 body: JSON.stringify({
                     statusCode: 500,

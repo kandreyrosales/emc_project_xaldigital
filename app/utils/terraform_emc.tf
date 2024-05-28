@@ -297,6 +297,7 @@ resource "aws_lambda_function_url" "lambda_url_logout" {
   authorization_type = "NONE"
 }
 
+####### API EMC #######
 resource "aws_api_gateway_rest_api" "emc_api" {
   name = "emc_api"
 
@@ -305,6 +306,7 @@ resource "aws_api_gateway_rest_api" "emc_api" {
   }
 }
 
+### API LOGIN ####
 resource "aws_api_gateway_resource" "api_resource_emc_login" {
   rest_api_id = aws_api_gateway_rest_api.emc_api.id
   parent_id    = aws_api_gateway_rest_api.emc_api.root_resource_id
@@ -337,7 +339,7 @@ resource "aws_api_gateway_integration" "lambda_integration_login" {
   integration_http_method = "POST"
 }
 
-####### SIGNUP #########
+####### API SIGNUP #########
 resource "aws_api_gateway_resource" "api_resource_signup_emc" {
   rest_api_id = aws_api_gateway_rest_api.emc_api.id
   parent_id    = aws_api_gateway_rest_api.emc_api.root_resource_id
@@ -371,11 +373,11 @@ resource "aws_api_gateway_integration" "lambda_integration_signup" {
 }
 ########
 
-#### LOGOUT #####
+# #### API LOGOUT #####
 resource "aws_api_gateway_resource" "api_resource_logout_emc" {
   rest_api_id = aws_api_gateway_rest_api.emc_api.id
   parent_id    = aws_api_gateway_rest_api.emc_api.root_resource_id
-  path_part    = "signup" # Replace with your desired path
+  path_part    = "logout" # Replace with your desired path
 
   depends_on = [aws_api_gateway_rest_api.emc_api]
 }
@@ -403,20 +405,240 @@ resource "aws_api_gateway_integration" "lambda_integration_logout" {
   uri         = aws_lambda_function.logout.invoke_arn
   integration_http_method = "POST"
 }
-########
+#######
+#### API CONFIRM EMAIL #####
+resource "aws_api_gateway_resource" "api_resource_confirm_email_emc" {
+  rest_api_id = aws_api_gateway_rest_api.emc_api.id
+  parent_id    = aws_api_gateway_rest_api.emc_api.root_resource_id
+  path_part    = "confirm_email" # Replace with your desired path
 
+  depends_on = [aws_api_gateway_rest_api.emc_api]
+}
+
+resource "aws_api_gateway_method" "api_method_confirm_email" {
+  rest_api_id   = aws_api_gateway_rest_api.emc_api.id
+  resource_id   = aws_api_gateway_resource.api_resource_confirm_email_emc.id
+  http_method   = "POST"
+  authorization = "NONE"
+}
+
+resource "aws_lambda_permission" "api_gateway_permission_confirm_email" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.confirm_email.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.emc_api.execution_arn}/*/*"
+}
+
+resource "aws_api_gateway_integration" "lambda_integration_confirm_email" {
+  rest_api_id = aws_api_gateway_rest_api.emc_api.id
+  resource_id = aws_api_gateway_resource.api_resource_confirm_email_emc.id
+  http_method = aws_api_gateway_method.api_method_confirm_email.http_method
+  type        = "AWS_PROXY"
+  uri         = aws_lambda_function.confirm_email.invoke_arn
+  integration_http_method = "POST"
+}
+########
+#### API FORGOT PASSWORD #####
+resource "aws_api_gateway_resource" "api_resource_forgot_password_emc" {
+  rest_api_id = aws_api_gateway_rest_api.emc_api.id
+  parent_id    = aws_api_gateway_rest_api.emc_api.root_resource_id
+  path_part    = "forgot_password" # Replace with your desired path
+
+  depends_on = [aws_api_gateway_rest_api.emc_api]
+}
+
+resource "aws_api_gateway_method" "api_method_forgot_password" {
+  rest_api_id   = aws_api_gateway_rest_api.emc_api.id
+  resource_id   = aws_api_gateway_resource.api_resource_forgot_password_emc.id
+  http_method   = "POST"
+  authorization = "NONE"
+}
+
+resource "aws_lambda_permission" "api_gateway_permission_forgot_password" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.forgot_password.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.emc_api.execution_arn}/*/*"
+}
+
+resource "aws_api_gateway_integration" "lambda_integration_forgot_password" {
+  rest_api_id = aws_api_gateway_rest_api.emc_api.id
+  resource_id = aws_api_gateway_resource.api_resource_forgot_password_emc.id
+  http_method = aws_api_gateway_method.api_method_forgot_password.http_method
+  type        = "AWS_PROXY"
+  uri         = aws_lambda_function.forgot_password.invoke_arn
+  integration_http_method = "POST"
+}
+########
+#### API CONFIRM FORGOT PASSWORD #####
+resource "aws_api_gateway_resource" "api_resource_confirm_forgot_password_emc" {
+  rest_api_id = aws_api_gateway_rest_api.emc_api.id
+  parent_id    = aws_api_gateway_rest_api.emc_api.root_resource_id
+  path_part    = "confirm_forgot_password" # Replace with your desired path
+
+  depends_on = [aws_api_gateway_rest_api.emc_api]
+}
+
+resource "aws_api_gateway_method" "api_method_confirm_forgot_password" {
+  rest_api_id   = aws_api_gateway_rest_api.emc_api.id
+  resource_id   = aws_api_gateway_resource.api_resource_confirm_forgot_password_emc.id
+  http_method   = "POST"
+  authorization = "NONE"
+}
+
+resource "aws_lambda_permission" "api_gateway_permission_confirm_forgot_password" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.confirm_forgot_password.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.emc_api.execution_arn}/*/*"
+}
+
+resource "aws_api_gateway_integration" "lambda_integration_confirm_forgot_password" {
+  rest_api_id = aws_api_gateway_rest_api.emc_api.id
+  resource_id = aws_api_gateway_resource.api_resource_confirm_forgot_password_emc.id
+  http_method = aws_api_gateway_method.api_method_confirm_forgot_password.http_method
+  type        = "AWS_PROXY"
+  uri         = aws_lambda_function.confirm_forgot_password.invoke_arn
+  integration_http_method = "POST"
+}
+########
+#### API RESEND CODE #####
+resource "aws_api_gateway_resource" "api_resource_resend_code_emc" {
+  rest_api_id = aws_api_gateway_rest_api.emc_api.id
+  parent_id    = aws_api_gateway_rest_api.emc_api.root_resource_id
+  path_part    = "resend_code" # Replace with your desired path
+
+  depends_on = [aws_api_gateway_rest_api.emc_api]
+}
+
+resource "aws_api_gateway_method" "api_method_resend_code" {
+  rest_api_id   = aws_api_gateway_rest_api.emc_api.id
+  resource_id   = aws_api_gateway_resource.api_resource_resend_code_emc.id
+  http_method   = "POST"
+  authorization = "NONE"
+}
+
+resource "aws_lambda_permission" "api_gateway_permission_resend_code" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.resend_code.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.emc_api.execution_arn}/*/*"
+}
+
+resource "aws_api_gateway_integration" "lambda_integration_resend_code" {
+  rest_api_id = aws_api_gateway_rest_api.emc_api.id
+  resource_id = aws_api_gateway_resource.api_resource_resend_code_emc.id
+  http_method = aws_api_gateway_method.api_method_resend_code.http_method
+  type        = "AWS_PROXY"
+  uri         = aws_lambda_function.resend_code.invoke_arn
+  integration_http_method = "POST"
+}
+########
+#### API GET USER INFORMATION #####
+resource "aws_api_gateway_resource" "api_resource_get_user_info_emc" {
+  rest_api_id = aws_api_gateway_rest_api.emc_api.id
+  parent_id    = aws_api_gateway_rest_api.emc_api.root_resource_id
+  path_part    = "get_user_info" # Replace with your desired path
+
+  depends_on = [aws_api_gateway_rest_api.emc_api]
+}
+
+resource "aws_api_gateway_method" "api_method_get_user_info" {
+  rest_api_id   = aws_api_gateway_rest_api.emc_api.id
+  resource_id   = aws_api_gateway_resource.api_resource_get_user_info_emc.id
+  http_method   = "POST"
+  authorization = "NONE"
+}
+
+resource "aws_lambda_permission" "api_gateway_permission_get_user_info" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.get_user_info.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.emc_api.execution_arn}/*/*"
+}
+
+resource "aws_api_gateway_integration" "lambda_integration_get_user_info" {
+  rest_api_id = aws_api_gateway_rest_api.emc_api.id
+  resource_id = aws_api_gateway_resource.api_resource_get_user_info_emc.id
+  http_method = aws_api_gateway_method.api_method_get_user_info.http_method
+  type        = "AWS_PROXY"
+  uri         = aws_lambda_function.get_user_info.invoke_arn
+  integration_http_method = "POST"
+}
+########
 
 
 resource "aws_api_gateway_deployment" "api_deployment" {
   depends_on = [
-    aws_api_gateway_integration.lambda_integration_login,
-    aws_api_gateway_integration.lambda_integration_signup,
-    aws_api_gateway_integration.lambda_integration_logout,
+      aws_api_gateway_method.api_method_login,
+      aws_api_gateway_integration.lambda_integration_login,
+      aws_api_gateway_method.api_method_signup,
+      aws_api_gateway_integration.lambda_integration_signup,
+      aws_api_gateway_method.api_method_logout,
+      aws_api_gateway_integration.lambda_integration_logout,
+
+      aws_api_gateway_method.api_method_confirm_email,
+      aws_api_gateway_integration.lambda_integration_confirm_email,
+
+      aws_api_gateway_method.api_method_confirm_forgot_password,
+      aws_api_gateway_integration.lambda_integration_confirm_forgot_password,
+
+      aws_api_gateway_method.api_method_get_user_info,
+      aws_api_gateway_integration.lambda_integration_get_user_info,
+
+      aws_api_gateway_method.api_method_resend_code,
+      aws_api_gateway_integration.lambda_integration_resend_code,
+
+      aws_api_gateway_method.api_method_forgot_password,
+      aws_api_gateway_integration.lambda_integration_forgot_password
   ]
   rest_api_id = aws_api_gateway_rest_api.emc_api.id
   stage_name  = "prod"
 }
 
 output "api_url" {
-  value = "${aws_api_gateway_deployment.api_deployment.invoke_url}/login"
+  value = "${aws_api_gateway_deployment.api_deployment.invoke_url}"
+}
+
+resource "aws_security_group" "rds_sg_emc" {
+  name_prefix = "rds_sg_emc"
+  ingress {
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  egress {
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"   // Allow all protocols
+    cidr_blocks     = ["0.0.0.0/0"]  // Allow traffic to any IPv4 address
+  }
+}
+
+resource "aws_db_instance" "posgtres_rds_emc" {
+  engine                 = "postgres"
+  db_name                = var.db_name
+  identifier             = "emc"
+  instance_class         = "db.t3.micro"
+  engine_version         = "12"
+  allocated_storage      = 20
+  publicly_accessible    = true
+  username               = var.username_db
+  password               = var.password_db
+  vpc_security_group_ids = [aws_security_group.rds_sg_emc.id]
+  skip_final_snapshot    = true
+
+  tags = {
+    Name = "emc-db"
+  }
+}
+
+output "endpoint" {
+  value = aws_db_instance.posgtres_rds_emc.endpoint
 }

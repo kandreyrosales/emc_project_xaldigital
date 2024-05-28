@@ -33,7 +33,8 @@ async function signIn(event) {
             statusCode: 200,
             headers: {
                     "Access-Control-Allow-Origin" : "*", // Required for CORS support to work
-                    "Access-Control-Allow-Credentials" : true // Required for cookies, authorization headers with HTTPS
+                    "Access-Control-Allow-Credentials" : true, // Required for cookies, authorization headers with HTTPS
+                    'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
                 },
             body: JSON.stringify(response.AuthenticationResult)
         }
@@ -43,7 +44,8 @@ async function signIn(event) {
             statusCode: 500,
                 headers: {
                     "Access-Control-Allow-Origin" : "*", // Required for CORS support to work
-                    "Access-Control-Allow-Credentials" : true // Required for cookies, authorization headers with HTTPS
+                    "Access-Control-Allow-Credentials" : true, // Required for cookies, authorization headers with HTTPS
+                    'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
                 },
                 body: JSON.stringify({
                     statusCode: 500,

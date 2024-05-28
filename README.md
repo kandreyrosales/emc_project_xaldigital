@@ -7,3 +7,5 @@ Implementación del Backend para la aplicación Mobile en Flutterflow con Custom
 * **Authentication:** AWS Cognito
 
 Documentación Javascript SDK AWS: https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/cognito-identity-provider/
+
+https://repost.aws/questions/QUiL6x18g9Qk2XJk73Y4sE5A/enabling-cors-on-api-gateway
