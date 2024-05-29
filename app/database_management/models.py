@@ -122,10 +122,11 @@ def insert_initial_data():
 
 def get_emc_courses_data():
     response = {
-        "specialty": "cardio neumología",
+        "specialty": {"name": "cardio neumología", "id": 1},
         "blocks": [
             {
                 "name": "hipertensión pulmonar",
+                "id": 1,
                 "courses": [
                     {"name": "Tratamiento HTPEC", "id": 1, "description": "Explora los dilemas éticos en la práctica médica y desarrolla tu capacidad para tomar decisiones éticas y moralmente responsables en situaciones clínicas compleja"},
                     {"name": "Tratamiento HP", "id": 2, "description": "Explora los dilemas éticos en la práctica médica y desarrolla tu capacidad para tomar decisiones éticas y moralmente responsables en situaciones clínicas compleja"},
