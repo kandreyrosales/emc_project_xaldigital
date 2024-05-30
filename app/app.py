@@ -5,13 +5,13 @@ from flask_sqlalchemy import SQLAlchemy
 
 db_username = os.getenv("db_username")
 db_password = os.getenv("db_password")
-db_endpoint = os.getenv("db_endpoint").split(":")[0]
+db_endpoint = os.getenv("db_endpoint")
 db_name = os.getenv("db_name")
 
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{db_username}:{db_password}@{db_endpoint}:5432/{db_name}'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{db_username}:{db_password}@{db_endpoint}/{db_name}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Configuración de Flask para asegurarse de que use UTF-8
 app.config['JSON_AS_ASCII'] = False
