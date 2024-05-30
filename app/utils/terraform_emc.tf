@@ -134,6 +134,46 @@ resource "aws_iam_role_policy_attachment" "lambda_emc_attachment" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"  # Attach a read-only S3 access policy
 }
 
+resource "aws_security_group" "rds_sg_emc" {
+  name_prefix = "rds_sg_emc"
+  ingress {
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  egress {
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"   // Allow all protocols
+    cidr_blocks     = ["0.0.0.0/0"]  // Allow traffic to any IPv4 address
+  }
+}
+
+### POSTRESQL RDS
+
+resource "aws_db_instance" "posgtres_rds_emc" {
+  engine                 = "postgres"
+  db_name                = var.db_name
+  identifier             = "emc"
+  instance_class         = "db.t3.micro"
+  engine_version         = "12"
+  allocated_storage      = 20
+  publicly_accessible    = true
+  username               = var.db_username
+  password               = var.db_password
+  vpc_security_group_ids = [aws_security_group.rds_sg_emc.id]
+  skip_final_snapshot    = true
+
+  tags = {
+    Name = "emc-db"
+  }
+}
+
+output "endpoint" {
+  value = aws_db_instance.posgtres_rds_emc.endpoint
+}
+
 # Create ZIP archive of Lambda function code
 data "archive_file" "lambda_zip" {
   type        = "zip"
@@ -596,6 +636,7 @@ resource "aws_api_gateway_deployment" "api_deployment" {
 
       aws_api_gateway_method.api_method_forgot_password,
       aws_api_gateway_integration.lambda_integration_forgot_password
+
   ]
   rest_api_id = aws_api_gateway_rest_api.emc_api.id
   stage_name  = "prod"
@@ -605,14 +646,107 @@ output "api_url" {
   value = "${aws_api_gateway_deployment.api_deployment.invoke_url}"
 }
 
-resource "aws_security_group" "rds_sg_emc" {
-  name_prefix = "rds_sg_emc"
+resource "aws_instance" "flask_ec2_emc" {
+  ami                    = var.ami
+  instance_type          = var.instance_type
+  key_name               = var.ssh_key_pair_name
+  associate_public_ip_address = true
+
+
+  provisioner "remote-exec" {
+    inline = [
+      # Install required packages
+      "sudo apt-get update -y",
+      "sudo apt-get install -y python3 git",
+      "curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py",
+      "sudo python3 get-pip.py",
+      "sudo apt-get install -y python3-venv",  # Install python3-venv package for virtual environments
+      "sudo apt install -y libpq-dev python3-dev",
+
+
+      "echo \"export db_endpoint=${aws_db_instance.posgtres_rds_emc.endpoint}\" >> ~/.bashrc",
+      "echo \"export db_password=${var.db_password}\" >> ~/.bashrc",
+
+      # Clone Flask application from GitHub
+      "git clone ${var.github_repo} /home/ubuntu/flask_app",
+
+      # Create and activate virtual environment
+      "cd /home/ubuntu/flask_app",
+      "python3 -m venv venv",
+      "source venv/bin/activate",
+      "cd app/",
+
+      # Install dependencies
+      "pip install -r requirements.txt",
+
+      "sudo ufw allow 5000",
+
+      # Create a systemd service for Gunicorn
+      "cat <<EOF | sudo tee /etc/systemd/system/flask_app.service",
+      "[Unit]",
+      "Description=Gunicorn instance to serve Flask application",
+      "After=network.target",
+
+      "[Service]",
+      "User=ubuntu",
+      "Group=ubuntu",
+      "WorkingDirectory=/home/ubuntu/flask_app/app",
+      "Environment=\"PATH=/home/ubuntu/flask_app/venv/bin\"",
+      "ExecStart=/home/ubuntu/.local/bin/gunicorn -w 1 -b 0.0.0.0:5000 -e bucket_name=${var.bucket_name} -e region_aws=${var.region_aws} -e accessKeyId=${var.accessKeyId} -e secretAccessKey=${var.secretAccessKey} -e db_endpoint=${aws_db_instance.posgtres_rds_emc.endpoint} -e db_name=${var.db_name} -e db_username=${var.db_username} -e db_password=${var.db_password} app:app",
+      "Restart=always",
+
+      "[Install]",
+      "WantedBy=multi-user.target",
+      "EOF",
+
+      # Start and enable the Gunicorn service
+      "sudo systemctl daemon-reload",
+      "sudo systemctl start flask_app",
+      "sudo systemctl enable flask_app",
+    ]
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"  # SSH username for Amazon Linux, CentOS, or Red Hat AMIs
+      private_key = file(var.private_key_ec2_path)  # Replace with the path to your SSH private key file
+      host        = self.public_ip
+    }
+  }
+
+  tags = {
+    Name = "EMC-Flask-Ubuntu"
+  }
+
+  vpc_security_group_ids = [aws_security_group.flask_sg_emc.id]
+
+}
+
+resource "aws_security_group" "flask_sg_emc" {
+  name        = "flask_sg_emc"
+  description = "Security group for Flask EC2 EMC project instance"
+
+  // Ingress rule to allow HTTP traffic from anywhere
   ingress {
-    from_port   = 5432
-    to_port     = 5432
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  // Allow traffic from any IPv4 address
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  ingress {
+    from_port   = 5000
+    to_port     = 5000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port       = 0
     to_port         = 0
@@ -621,24 +755,7 @@ resource "aws_security_group" "rds_sg_emc" {
   }
 }
 
-resource "aws_db_instance" "posgtres_rds_emc" {
-  engine                 = "postgres"
-  db_name                = var.db_name
-  identifier             = "emc"
-  instance_class         = "db.t3.micro"
-  engine_version         = "12"
-  allocated_storage      = 20
-  publicly_accessible    = true
-  username               = var.username_db
-  password               = var.password_db
-  vpc_security_group_ids = [aws_security_group.rds_sg_emc.id]
-  skip_final_snapshot    = true
-
-  tags = {
-    Name = "emc-db"
-  }
+output "public_ip" {
+  value = aws_instance.flask_ec2_emc.public_ip
 }
 
-output "endpoint" {
-  value = aws_db_instance.posgtres_rds_emc.endpoint
-}
