@@ -152,7 +152,7 @@ def list_courses():
 @app.route('/create_tables', methods=['GET'])
 def create_tables():
     create_tables()
-    insert_initial_data()
+    # insert_initial_data()
     return jsonify({"message": "Tables created."})
 
 
