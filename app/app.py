@@ -136,7 +136,7 @@ def obtener_cursos_por_especializacion(especializacion: str):
 
 @app.route('/list_courses', methods=['GET'])
 def list_courses():
-    cursos = obtener_cursos_por_especializacion(request.args.get('especializacion_nombe'))
+    cursos = obtener_cursos_por_especializacion(request.args.get('especializacion_nombre'))
     cursos_json = []
     for curso in cursos:
         cursos_json.append({
