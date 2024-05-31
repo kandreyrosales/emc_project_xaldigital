@@ -38,6 +38,7 @@ class Curso(db.Model):
     __tablename__ = 'curso'
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), nullable=False)
+    contenido = db.Column(db.Text)
     bloque_curso_id = db.Column(db.Integer, db.ForeignKey('bloque_curso.id', ondelete='CASCADE'))
     bloque_curso = db.relationship('BloqueCurso', backref=db.backref('cursos', lazy=True))
 
@@ -90,10 +91,10 @@ def insert_initial_data():
         db.session.add(b11)
         db.session.add(b2)
 
-        curso1 = Curso(nombre="Tratamiento HTPEC", bloque_curso=b1)
-        curso2 = Curso(nombre="Tratamiento HP", bloque_curso=b1)
-        curso3 = Curso(nombre="Diagnóstico", bloque_curso=b1)
-        curso4 = Curso(nombre="Criptografía", bloque_curso=b2)
+        curso1 = Curso(nombre="Tratamiento HTPEC", bloque_curso=b1, contenido="Este curso es inicial")
+        curso2 = Curso(nombre="Tratamiento HP", bloque_curso=b1, contenido="Este curso es intermedio")
+        curso3 = Curso(nombre="Diagnóstico", bloque_curso=b1, contenido="Este curso es avanzado")
+        curso4 = Curso(nombre="Criptografía", bloque_curso=b2, contenido="Este curso es inicial")
 
         db.session.add(curso1)
         db.session.add(curso2)
@@ -142,22 +143,28 @@ def obtener_cursos_por_especializacion(especializacion: str):
 
 @app.route('/list_courses', methods=['GET'])
 def list_courses():
-    cursos = obtener_cursos_por_especializacion(especializacion=request.args.get('especializacion_nombre'))
+    bloque_id = request.args.get('bloque_id')
+    bloque = BloqueCurso.query.get(bloque_id)
     cursos_json = []
-    for curso in cursos:
-        cursos_json.append({
-            'id': curso.id,
-            'nombre': curso.nombre,
-            'bloque': curso.bloque_curso.nombre,
-            'especializacion': curso.bloque_curso.especializacion.nombre
-        })
+    if bloque:
+        for curso in bloque.cursos:
+            cursos_json.append({
+                "id": curso.id,
+                "nombre": curso.nombre,
+                "contenido": curso.contenido
+            })
     return jsonify(cursos_json)
+
+
+def get_especialty(especializacion_nombre: str):
+    especializacion_query = Especializacion.query.filter_by(nombre=especializacion_nombre).first()
+    return especializacion_query
 
 
 @app.route('/list_blocks', methods=['GET'])
 def list_blocks():
     especializacion_nombre = request.args.get('especializacion_nombre')
-    especializacion_query = Especializacion.query.filter_by(nombre=especializacion_nombre).first()
+    especializacion_query = get_especialty(especializacion_nombre=especializacion_nombre)
     bloques_json = []
     if especializacion_query:
         for bloque in especializacion_query.bloques_curso:
