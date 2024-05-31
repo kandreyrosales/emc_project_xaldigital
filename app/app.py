@@ -143,7 +143,7 @@ def obtener_cursos_por_especializacion(especializacion: str):
 
 @app.route('/list_courses', methods=['GET'])
 def list_courses():
-    bloque_id = request.args.get('bloque_id')
+    bloque_id = int(request.args.get('bloque_id'))
     bloque = BloqueCurso.query.get(bloque_id)
     cursos_json = []
     if bloque:
