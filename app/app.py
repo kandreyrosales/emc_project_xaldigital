@@ -123,9 +123,10 @@ def connect_and_execute(query):
 
 
 def obtener_cursos_por_especializacion(especializacion: str):
-    especializacion = Especializacion.query.get(nombre=especializacion)
+    especializacion = Especializacion.query.filter(nombre=especializacion)
     if not especializacion:
         return []
+    especializacion = especializacion[0]
 
     cursos = []
     for bloque in especializacion.bloques_curso:
