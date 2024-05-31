@@ -29,6 +29,7 @@ class BloqueCurso(db.Model):
     __tablename__ = 'bloque_curso'
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), nullable=False)
+    contenido = db.Column(db.Text)
     especializacion_id = db.Column(db.Integer, db.ForeignKey('especializacion.id', ondelete='CASCADE'))
     especializacion = db.relationship('Especializacion', backref=db.backref('bloques_curso', lazy=True))
 
@@ -76,9 +77,17 @@ def insert_initial_data():
         db.session.add(especializacion)
         db.session.add(especializacion_2)
         db.session.add(especializacion_3)
-        b1 = BloqueCurso(nombre="Hipertensión Pulmonar", especializacion=especializacion)
+        b1 = BloqueCurso(nombre="Hipertensión Pulmonar", especializacion=especializacion,
+                         contenido="Este curso intensivo le brinda una comprensión profunda de la HTP, "
+                                   "una condición compleja que afecta los pulmones. Explore las causas, "
+                                   "la clasificación, el diagnóstico y las opciones de tratamiento, "
+                                   "incluyendo medicamentos, procedimientos quirúrgicos y cuidados de apoyo.")
+        b11 = BloqueCurso(nombre="Comprenda a fondo la HTP", especializacion=especializacion,
+                         contenido="Mejore su comprensión de esta condición compleja para brindar "
+                                   "una atención informada a los pacientes.")
         b2 = BloqueCurso(nombre="Columna", especializacion=especializacion_2)
         db.session.add(b1)
+        db.session.add(b11)
         db.session.add(b2)
 
         curso1 = Curso(nombre="Tratamiento HTPEC", bloque_curso=b1)
@@ -145,9 +154,28 @@ def list_courses():
     return jsonify(cursos_json)
 
 
+@app.route('/list_blocks', methods=['GET'])
+def list_blocks():
+    especializacion_nombre = request.args.get('especializacion_nombre')
+    especializacion_query = Especializacion.query.filter_by(nombre=especializacion_nombre).first()
+    bloques_json = []
+    if especializacion_query:
+        for bloque in especializacion_query.bloques_curso:
+            bloques_json.append({
+                "nombre": bloque.nombre,
+                "id": bloque.id
+            })
+    return jsonify(bloques_json)
+
+
 @app.route('/create_tables_command', methods=['GET'])
 def create_tables_command():
     create_tables()
+    return jsonify({"message": "Tables created."})
+
+@app.route('/drop_tables_command', methods=['GET'])
+def drop_tables_command():
+    drop_tables()
     return jsonify({"message": "Tables created."})
 
 
