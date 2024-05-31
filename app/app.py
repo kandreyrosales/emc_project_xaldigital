@@ -122,8 +122,8 @@ def connect_and_execute(query):
         return None
 
 
-def obtener_cursos_por_especializacion(especializacion_id: int):
-    especializacion = Especializacion.query.get(especializacion_id)
+def obtener_cursos_por_especializacion(especializacion: str):
+    especializacion = Especializacion.query.get(nombre=especializacion)
     if not especializacion:
         return []
 
@@ -136,8 +136,7 @@ def obtener_cursos_por_especializacion(especializacion_id: int):
 
 @app.route('/list_courses', methods=['GET'])
 def list_courses():
-    especializacion_id = int(request.args.get('especializacion_id'))
-    cursos = obtener_cursos_por_especializacion(especializacion_id)
+    cursos = obtener_cursos_por_especializacion(request.args.get('especializacion_nombe'))
     cursos_json = []
     for curso in cursos:
         cursos_json.append({
