@@ -149,6 +149,13 @@ def list_courses():
     return jsonify(cursos_json)
 
 
+@app.route('/create_tables', methods=['GET'])
+def create_tables():
+    create_tables()
+    insert_initial_data()
+    return jsonify({"message": "Tables created."})
+
+
 @app.route('/list_specialties', methods=['GET'])
 def list_specialties():
     especializaciones = Especializacion.query.all()
