@@ -163,7 +163,8 @@ def list_blocks():
         for bloque in especializacion_query.bloques_curso:
             bloques_json.append({
                 "nombre": bloque.nombre,
-                "id": bloque.id
+                "id": bloque.id,
+                "contenido": bloque.contenido
             })
     return jsonify(bloques_json)
 
