@@ -661,14 +661,15 @@ resource "aws_instance" "flask_ec2_emc" {
       "curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py",
       "sudo python3 get-pip.py",
       "sudo apt-get install -y python3-venv",  # Install python3-venv package for virtual environments
-      "sudo apt install -y libpq-dev python3-dev",
+      "sudo apt-get install -y libpq-dev python3-dev",
 
 
       "echo \"export db_endpoint=${aws_db_instance.posgtres_rds_emc.endpoint}\" >> ~/.bashrc",
       "echo \"export db_password=${var.db_password}\" >> ~/.bashrc",
 
       # Clone Flask application from GitHub
-      "git clone ${var.github_repo} /home/ubuntu/flask_app",
+      "git clone https://github.com/kandreyrosales/emc_project_xaldigital.git /home/ubuntu/flask_app",
+
 
       # Create and activate virtual environment
       "cd /home/ubuntu/flask_app",
