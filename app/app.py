@@ -348,7 +348,8 @@ def get_examen():
         return jsonify({
             'id': examen.id,
             'titulo': examen.titulo,
-            'preguntas': preguntas
+            'preguntas': preguntas,
+            'cantidad_preguntas': len(preguntas)
         })
     return jsonify({})
 
