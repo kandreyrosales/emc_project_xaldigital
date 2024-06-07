@@ -80,31 +80,6 @@ class Pregunta(db.Model):
     examen = db.relationship('Examen', backref=db.backref('preguntas', lazy=True))
 
 
-def get_examen(articulo_id: int):
-    examen = Examen.query.filter_by(articulo_id=articulo_id).first()
-    preguntas = []
-    if examen:
-        for pregunta in examen.preguntas:
-            preguntas.append({
-                'id': pregunta.id,
-                'enunciado': pregunta.enunciado,
-                'opciones': {
-                    'A': pregunta.opcion_a,
-                    'B': pregunta.opcion_b,
-                    'C': pregunta.opcion_c,
-                    'D': pregunta.opcion_d,
-                },
-                'respuesta_correcta': pregunta.respuesta_correcta,
-                'explicacion':  pregunta.explicacion
-            })
-        return jsonify({
-            'id': examen.id,
-            'titulo': examen.titulo,
-            'preguntas': preguntas
-        })
-    return jsonify({})
-
-
 def crear_examen(articulo_id):
     data = {
         "titulo": "Examen de Prueba",
@@ -115,7 +90,8 @@ def crear_examen(articulo_id):
                 "opcion_b": "París",
                 "opcion_c": "Berlín",
                 "opcion_d": "Lisboa",
-                "respuesta_correcta": "B"
+                "respuesta_correcta": "B",
+                "explicacion": "Es la respuesta porque si"
             },
             {
                 "enunciado": "¿Cuál es el resultado de 2+2?",
@@ -123,7 +99,8 @@ def crear_examen(articulo_id):
                 "opcion_b": "4",
                 "opcion_c": "5",
                 "opcion_d": "6",
-                "respuesta_correcta": "B"
+                "respuesta_correcta": "B",
+                "explicacion": "Es la respuesta porque si y así es"
             }
         ]
     }
@@ -147,6 +124,7 @@ def crear_examen(articulo_id):
         opcion_c = pregunta_data.get('opcion_c')
         opcion_d = pregunta_data.get('opcion_d')
         respuesta_correcta = pregunta_data.get('respuesta_correcta')
+        explicacion = pregunta_data.get('explicacion')
 
         nueva_pregunta = Pregunta(
             enunciado=enunciado,
@@ -155,7 +133,8 @@ def crear_examen(articulo_id):
             opcion_c=opcion_c,
             opcion_d=opcion_d,
             respuesta_correcta=respuesta_correcta,
-            examen_id=nuevo_examen.id
+            examen_id=nuevo_examen.id,
+            explicacion=explicacion
         )
         db.session.add(nueva_pregunta)
     db.session.commit()
@@ -346,5 +325,31 @@ def get_article():
         'contenido': article.contenido,
         'examen_id': article.examenes[0].id,
     })
+
+
+@app.route('/exam', methods=['GET'])
+def get_examen():
+    examen = Examen.query.get_or_404(int(request.args.get('exam_id')))
+    preguntas = []
+    if examen:
+        for pregunta in examen.preguntas:
+            preguntas.append({
+                'id': pregunta.id,
+                'enunciado': pregunta.enunciado,
+                'opciones': {
+                    'A': pregunta.opcion_a,
+                    'B': pregunta.opcion_b,
+                    'C': pregunta.opcion_c,
+                    'D': pregunta.opcion_d,
+                },
+                'respuesta_correcta': pregunta.respuesta_correcta,
+                'explicacion':  pregunta.explicacion
+            })
+        return jsonify({
+            'id': examen.id,
+            'titulo': examen.titulo,
+            'preguntas': preguntas
+        })
+    return jsonify({})
 
 
