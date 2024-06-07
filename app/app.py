@@ -58,6 +58,110 @@ class Articulo(db.Model):
     )
 
 
+class Examen(db.Model):
+    __tablename__ = 'examen'
+    id = db.Column(db.Integer, primary_key=True)
+    titulo = db.Column(db.String(100), nullable=False)
+    articulo_id = db.Column(db.Integer, db.ForeignKey('articulo.id', ondelete='CASCADE'))
+    articulo = db.relationship('Articulo', backref=db.backref('examenes', lazy=True))
+
+
+class Pregunta(db.Model):
+    __tablename__ = 'pregunta'
+    id = db.Column(db.Integer, primary_key=True)
+    enunciado = db.Column(db.String(255), nullable=False)
+    opcion_a = db.Column(db.String(100), nullable=False)
+    opcion_b = db.Column(db.String(100), nullable=False)
+    opcion_c = db.Column(db.String(100), nullable=False)
+    opcion_d = db.Column(db.String(100), nullable=False)
+    respuesta_correcta = db.Column(db.String(1), nullable=False)  # 'A', 'B', 'C', 'D'
+    explicacion = db.Column(db.Text, nullable=True)
+    examen_id = db.Column(db.Integer, db.ForeignKey('examen.id', ondelete='CASCADE'))
+    examen = db.relationship('Examen', backref=db.backref('preguntas', lazy=True))
+
+
+def get_examen(articulo_id: int):
+    examen = Examen.query.filter_by(articulo_id=articulo_id).first()
+    preguntas = []
+    if examen:
+        for pregunta in examen.preguntas:
+            preguntas.append({
+                'id': pregunta.id,
+                'enunciado': pregunta.enunciado,
+                'opciones': {
+                    'A': pregunta.opcion_a,
+                    'B': pregunta.opcion_b,
+                    'C': pregunta.opcion_c,
+                    'D': pregunta.opcion_d,
+                },
+                'respuesta_correcta': pregunta.respuesta_correcta,
+                'explicacion':  pregunta.explicacion
+            })
+        return jsonify({
+            'id': examen.id,
+            'titulo': examen.titulo,
+            'preguntas': preguntas
+        })
+    return jsonify({})
+
+
+def crear_examen(articulo_id):
+    data = {
+        "titulo": "Examen de Prueba",
+        "preguntas": [
+            {
+                "enunciado": "¿Cuál es la capital de Francia?",
+                "opcion_a": "Madrid",
+                "opcion_b": "París",
+                "opcion_c": "Berlín",
+                "opcion_d": "Lisboa",
+                "respuesta_correcta": "B"
+            },
+            {
+                "enunciado": "¿Cuál es el resultado de 2+2?",
+                "opcion_a": "3",
+                "opcion_b": "4",
+                "opcion_c": "5",
+                "opcion_d": "6",
+                "respuesta_correcta": "B"
+            }
+        ]
+    }
+
+    titulo = data.get('titulo')
+    preguntas_data = data.get('preguntas', [])
+
+    if not titulo or not preguntas_data:
+        return jsonify({'message': 'Titulo del examen y preguntas son requeridos'}), 400
+
+    # Crear el examen
+    nuevo_examen = Examen(titulo=titulo, articulo_id=articulo_id)
+    db.session.add(nuevo_examen)
+    db.session.commit()
+
+    # Crear las preguntas asociadas al examen
+    for pregunta_data in preguntas_data:
+        enunciado = pregunta_data.get('enunciado')
+        opcion_a = pregunta_data.get('opcion_a')
+        opcion_b = pregunta_data.get('opcion_b')
+        opcion_c = pregunta_data.get('opcion_c')
+        opcion_d = pregunta_data.get('opcion_d')
+        respuesta_correcta = pregunta_data.get('respuesta_correcta')
+
+        nueva_pregunta = Pregunta(
+            enunciado=enunciado,
+            opcion_a=opcion_a,
+            opcion_b=opcion_b,
+            opcion_c=opcion_c,
+            opcion_d=opcion_d,
+            respuesta_correcta=respuesta_correcta,
+            examen_id=nuevo_examen.id
+        )
+        db.session.add(nueva_pregunta)
+    db.session.commit()
+    return jsonify({'message': 'Examen creado exitosamente'}), 201
+
+
 def create_tables():
     with app.app_context():
         db.create_all()
@@ -71,6 +175,8 @@ def drop_tables():
 
 
 def insert_initial_data():
+    drop_tables()
+    create_tables()
     with app.app_context():
         especializacion = Especializacion(nombre='Cardio Neumología')
         especializacion_2 = Especializacion(nombre='Especializacion 2')
@@ -84,8 +190,8 @@ def insert_initial_data():
                                    "la clasificación, el diagnóstico y las opciones de tratamiento, "
                                    "incluyendo medicamentos, procedimientos quirúrgicos y cuidados de apoyo.")
         b11 = BloqueCurso(nombre="Comprenda a fondo la HTP", especializacion=especializacion,
-                         contenido="Mejore su comprensión de esta condición compleja para brindar "
-                                   "una atención informada a los pacientes.")
+                          contenido="Mejore su comprensión de esta condición compleja para brindar "
+                                    "una atención informada a los pacientes.")
         b2 = BloqueCurso(nombre="Columna", especializacion=especializacion_2)
         db.session.add(b1)
         db.session.add(b11)
@@ -118,6 +224,8 @@ def insert_initial_data():
         db.session.add(article1)
         db.session.add(article2)
         db.session.commit()
+
+        crear_examen(article1.id)
 
 
 def connect_and_execute(query):
@@ -180,6 +288,7 @@ def list_blocks():
 def create_tables_command():
     create_tables()
     return jsonify({"message": "Tables created."})
+
 
 @app.route('/drop_tables_command', methods=['GET'])
 def drop_tables_command():
