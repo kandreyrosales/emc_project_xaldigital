@@ -332,6 +332,10 @@ def list_articles():
 
 @app.route('/article', methods=['GET'])
 def get_article():
+    """
+    Un Articulo puede tener a futuro varios examanes, pero nosotros estaremos por ahora tomando solo 1
+    :return:
+    """
     article_id = int(request.args.get('article_id'))
     article = Articulo.query.get_or_404(article_id)
     return jsonify({
@@ -339,7 +343,8 @@ def get_article():
         'titulo': article.titulo,
         'url_file': article.url_contenido,
         'tipo': article.tipo,
-        'contenido': article.contenido
+        'contenido': article.contenido,
+        'examen_id': article.examenes[0].id,
     })
 
 
