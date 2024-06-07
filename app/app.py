@@ -328,3 +328,18 @@ def list_articles():
             'contenido': article.contenido
         })
     return jsonify(articles_json)
+
+
+@app.route('/article', methods=['GET'])
+def get_article():
+    article_id = int(request.args.get('article_id'))
+    article = Articulo.query.get_or_404(article_id)
+    return jsonify({
+        'id': article.id,
+        'titulo': article.titulo,
+        'url_file': article.url_contenido,
+        'tipo': article.tipo,
+        'contenido': article.contenido
+    })
+
+
