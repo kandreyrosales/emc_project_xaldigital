@@ -343,14 +343,14 @@ def get_examen():
 def get_question():
     pregunta = Pregunta.query.get_or_404(int(request.args.get('question_id')))
     return jsonify({
-            'id': pregunta.id,
-            'enunciado': pregunta.enunciado,
-            'opciones': {
-                'A': pregunta.opcion_a,
-                'B': pregunta.opcion_b,
-                'C': pregunta.opcion_c,
-                'D': pregunta.opcion_d,
-            },
-            'respuesta_correcta': pregunta.respuesta_correcta,
-            'explicacion':  pregunta.explicacion
-        })
+        'id': pregunta.id,
+        'enunciado': pregunta.enunciado,
+        'opciones': [
+            {'opcion': 'A', 'descripcion': pregunta.opcion_b},
+            {'opcion': 'B', 'descripcion': pregunta.opcion_b},
+            {'opcion': 'C', 'descripcion': pregunta.opcion_c},
+            {'opcion': 'D', 'descripcion': pregunta.opcion_d},
+        ],
+        'respuesta_correcta': pregunta.respuesta_correcta,
+        'explicacion':  pregunta.explicacion
+    })
