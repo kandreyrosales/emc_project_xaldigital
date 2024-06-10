@@ -80,33 +80,10 @@ class Pregunta(db.Model):
     examen = db.relationship('Examen', backref=db.backref('preguntas', lazy=True))
 
 
-def crear_examen(articulo_id):
-    data = {
-        "titulo": "Examen de Prueba",
-        "preguntas": [
-            {
-                "enunciado": "¿Cuál es la capital de Francia?",
-                "opcion_a": "Madrid",
-                "opcion_b": "París",
-                "opcion_c": "Berlín",
-                "opcion_d": "Lisboa",
-                "respuesta_correcta": "B",
-                "explicacion": "Es la respuesta porque si"
-            },
-            {
-                "enunciado": "¿Cuál es el resultado de 2+2?",
-                "opcion_a": "3",
-                "opcion_b": "4",
-                "opcion_c": "5",
-                "opcion_d": "6",
-                "respuesta_correcta": "B",
-                "explicacion": "Es la respuesta porque si y así es"
-            }
-        ]
-    }
+def crear_examen(articulo_id, data_exam: dict):
 
-    titulo = data.get('titulo')
-    preguntas_data = data.get('preguntas', [])
+    titulo = data_exam.get('titulo')
+    preguntas_data = data_exam.get('preguntas', [])
 
     if not titulo or not preguntas_data:
         return jsonify({'message': 'Titulo del examen y preguntas son requeridos'}), 400
@@ -204,7 +181,56 @@ def insert_initial_data():
         db.session.add(article2)
         db.session.commit()
 
-        crear_examen(article1.id)
+        data_example_article_2 = {
+            "titulo": "Examen de Prueba",
+            "preguntas": [
+                {
+                    "enunciado": "¿Cuál es la capital de Francia?",
+                    "opcion_a": "Madrid",
+                    "opcion_b": "París",
+                    "opcion_c": "Berlín",
+                    "opcion_d": "Lisboa",
+                    "respuesta_correcta": "B",
+                    "explicacion": "Es la respuesta porque si"
+                },
+                {
+                    "enunciado": "¿Cuál es el resultado de 2+2?",
+                    "opcion_a": "3",
+                    "opcion_b": "4",
+                    "opcion_c": "5",
+                    "opcion_d": "6",
+                    "respuesta_correcta": "B",
+                    "explicacion": "Es la respuesta porque si y así es"
+                }
+            ]
+        }
+
+        data_example_article_1 = {
+            "titulo": "Examen Articulo 2",
+            "preguntas": [
+                {
+                    "enunciado": "Ejemplo de enunciado 1",
+                    "opcion_a": "AAAAAAAAAAAA"*4,
+                    "opcion_b": "BBBBBBBBBBBB"*4,
+                    "opcion_c": "CCCCCCCCCCCC"*4,
+                    "opcion_d": "DDDDDDDDDDDD"*4,
+                    "respuesta_correcta": "B",
+                    "explicacion": "Es la respuesta porque si"
+                },
+                {
+                    "enunciado": "Ejemplo de enunciado 1",
+                    "opcion_a": "DDDDDDDDDDD" * 4,
+                    "opcion_b": "FFFFFFFF" * 4,
+                    "opcion_c": "NNNNNNNNN" * 4,
+                    "opcion_d": "TTTTTTTTT" * 4,
+                    "respuesta_correcta": "C",
+                    "explicacion": "Es la respuesta porque si"
+                },
+            ]
+        }
+
+        crear_examen(article2.id, data_example_article_2)
+        crear_examen(article1.id, data_example_article_1)
 
 
 def connect_and_execute(query):
