@@ -330,27 +330,27 @@ def get_article():
 @app.route('/exam', methods=['GET'])
 def get_examen():
     examen = Examen.query.get_or_404(int(request.args.get('exam_id')))
-    preguntas = []
     if examen:
-        for pregunta in examen.preguntas:
-            preguntas.append({
-                'id': pregunta.id,
-                'enunciado': pregunta.enunciado,
-                'opciones': {
-                    'A': pregunta.opcion_a,
-                    'B': pregunta.opcion_b,
-                    'C': pregunta.opcion_c,
-                    'D': pregunta.opcion_d,
-                },
-                'respuesta_correcta': pregunta.respuesta_correcta,
-                'explicacion':  pregunta.explicacion
-            })
         return jsonify({
             'id': examen.id,
             'titulo': examen.titulo,
-            'preguntas': preguntas,
-            'cantidad_preguntas': len(preguntas)
+            'cantidad_preguntas': len(examen.preguntas)
         })
     return jsonify({})
 
 
+@app.route('/question', methods=['GET'])
+def get_question():
+    pregunta = Pregunta.query.get_or_404(int(request.args.get('question_id')))
+    return jsonify({
+            'id': pregunta.id,
+            'enunciado': pregunta.enunciado,
+            'opciones': {
+                'A': pregunta.opcion_a,
+                'B': pregunta.opcion_b,
+                'C': pregunta.opcion_c,
+                'D': pregunta.opcion_d,
+            },
+            'respuesta_correcta': pregunta.respuesta_correcta,
+            'explicacion':  pregunta.explicacion
+        })
