@@ -194,12 +194,12 @@ def insert_initial_data():
                     "explicacion": "Es la respuesta porque si"
                 },
                 {
-                    "enunciado": "¿Cuál es el resultado de 2+2?",
-                    "opcion_a": "3",
-                    "opcion_b": "4",
-                    "opcion_c": "5",
-                    "opcion_d": "6",
-                    "respuesta_correcta": "B",
+                    "enunciado": "¿Cuál es el resultado de 200+2?",
+                    "opcion_a": "202",
+                    "opcion_b": "65000",
+                    "opcion_c": "5777777",
+                    "opcion_d": "6222222222",
+                    "respuesta_correcta": "A",
                     "explicacion": "Es la respuesta porque si y así es"
                 }
             ]
