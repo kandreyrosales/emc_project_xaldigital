@@ -346,7 +346,7 @@ def get_question():
         'id': pregunta.id,
         'enunciado': pregunta.enunciado,
         'opciones': [
-            {'opcion': 'A', 'descripcion': pregunta.opcion_b},
+            {'opcion': 'A', 'descripcion': pregunta.opcion_a},
             {'opcion': 'B', 'descripcion': pregunta.opcion_b},
             {'opcion': 'C', 'descripcion': pregunta.opcion_c},
             {'opcion': 'D', 'descripcion': pregunta.opcion_d},
