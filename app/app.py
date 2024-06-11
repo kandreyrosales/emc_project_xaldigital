@@ -387,3 +387,4 @@ def get_question():
 def send_exam_results():
     print('send_exam_results')
     print(request.form.get('exam_results'))
+    return jsonify({'message': 'Examen finalizado!.'})
