@@ -193,7 +193,7 @@ def insert_initial_data():
         db.session.add(curso_jivi)
 
         articulo_jivi = Articulo(
-            titulo="Phase I study of BAY 94-9027, a PEGylated B-domain-deleted recombinant factor VIII with an extended half-life, in subjects with hemophilia A",
+            titulo="recombinant factor VIII with an extended half-life, in subjects with hemophilia A",
             contenido='Este material trata de un PDF muy importante',
             tipo='pdf',
             url_contenido='https://archivosemc.s3.amazonaws.com/2.+JIVI%C2%AE+%5Bfactor+antihemofi%CC%81lico+(recombinante)%2C+PEGilado-aucl%5D+polvo+liofilizado.pdf',
