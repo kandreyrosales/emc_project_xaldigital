@@ -507,6 +507,6 @@ def exam_result():
         return jsonify({
             'id': exam_result_obj.id,
             'result_responses': exam_result_obj.respuestas,
-            'total_questions': len(json.loads(exam_result_obj.respuestas).get('questions'))
+            'total_questions': len(exam_result_obj.respuestas)
         })
     return jsonify({})
