@@ -444,7 +444,6 @@ class Score:
 
     def validate_questions(self):
         question_dict = {}
-        json_result_list = []
         valid_answers = 0
         invalid_answers = 0
         for question in self.questions:
@@ -465,9 +464,8 @@ class Score:
                     'respuesta_correcta': check_correct_answer(question_id=question_id),
                     'respuesta': 'incorrecta'
                 }
-            json_result_list.append(question_dict)
         return {
-            'questions': json_result_list,
+            'questions': question_dict,
             'valid_questions': valid_answers,
             'invalid_questions': invalid_answers,
             'points': valid_answers*10
