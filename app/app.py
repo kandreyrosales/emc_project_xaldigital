@@ -489,7 +489,6 @@ class Score:
         }
 
 
-
 @app.route('/send_exam_results', methods=['POST'])
 def send_exam_results():
     data = request.json
@@ -498,7 +497,7 @@ def send_exam_results():
     exam_id = data.get('examId')
     user_email = data.get('userEmail')
     score = Score(questions=exam_results, exam_id=exam_id, user_email=user_email, elapsed_time=elapsed_time)
-    print(score.results_id)
+    print(score.results_id, "alksjdkasdjaslkdasjkldjklasd")
     return jsonify({'exam_results_id': score.results_id})
 
 
