@@ -381,3 +381,9 @@ def get_question():
         'respuesta_correcta': pregunta.respuesta_correcta,
         'explicacion':  pregunta.explicacion
     })
+
+
+@app.route('/send_exam_results', methods=['POST'])
+def send_exam_results():
+    print('send_exam_results')
+    print(request.form.get('exam_results'))
