@@ -159,103 +159,161 @@ def insert_initial_data():
     drop_tables()
     create_tables()
     with app.app_context():
-        especializacion = Especializacion(nombre='Cardio Neumología')
+        especializacion_cardio = Especializacion(nombre='Cardio Neumología')
         especializacion_2 = Especializacion(nombre='Especializacion 2')
         especializacion_3 = Especializacion(nombre='Especializacion 3')
-        db.session.add(especializacion)
+        db.session.add(especializacion_cardio)
         db.session.add(especializacion_2)
         db.session.add(especializacion_3)
-        b1 = BloqueCurso(nombre="Hipertensión Pulmonar", especializacion=especializacion,
-                         contenido="Este curso intensivo le brinda una comprensión profunda de la HTP, "
-                                   "una condición compleja que afecta los pulmones. Explore las causas, "
-                                   "la clasificación, el diagnóstico y las opciones de tratamiento, "
-                                   "incluyendo medicamentos, procedimientos quirúrgicos y cuidados de apoyo.")
-        b11 = BloqueCurso(nombre="Comprenda a fondo la HTP", especializacion=especializacion,
-                          contenido="Mejore su comprensión de esta condición compleja para brindar "
-                                    "una atención informada a los pacientes.")
-        b2 = BloqueCurso(nombre="Columna", especializacion=especializacion_2)
-        db.session.add(b1)
-        db.session.add(b11)
-        db.session.add(b2)
+        hipertension = BloqueCurso(nombre="Hipertensión Pulmonar",
+                                   especializacion=especializacion_cardio,
+                                   contenido="Este curso intensivo le brinda una comprensión profunda de la HTP, "
+                                             "una condición compleja que afecta los pulmones. Explore las causas, "
+                                             "la clasificación, el diagnóstico y las opciones de tratamiento, "
+                                             "incluyendo medicamentos, procedimientos quirúrgicos y cuidados de apoyo.")
+        hemofilia = BloqueCurso(
+            nombre="Comprenda a fondo la Hemofilia",
+            especializacion=especializacion_cardio,
+            contenido="Mejore su comprensión de esta condición compleja para brindar "
+                      "una atención informada a los pacientes.")
 
-        curso1 = Curso(nombre="Tratamiento HTPEC", bloque_curso=b1, contenido="Este curso es inicial")
-        curso2 = Curso(nombre="Tratamiento HP", bloque_curso=b1, contenido="Este curso es intermedio")
-        curso3 = Curso(nombre="Diagnóstico", bloque_curso=b1, contenido="Este curso es avanzado")
-        curso4 = Curso(nombre="Criptografía", bloque_curso=b2, contenido="Este curso es inicial")
+        db.session.add(hipertension)
+        db.session.add(hemofilia)
 
-        db.session.add(curso1)
-        db.session.add(curso2)
-        db.session.add(curso3)
-        db.session.add(curso4)
+        curso_kovaltry = Curso(
+            nombre="KOVALTRY (OCTOCOG ALFA)",
+            bloque_curso=hemofilia,
+            contenido="Este curso es inicial")
+        curso_jivi = Curso(
+            nombre="JIVI (DAMOCTOCOG ALFA PEGOL)",
+            bloque_curso=hemofilia,
+            contenido="Este curso es intermedio")
 
-        article1 = Articulo(
-            titulo='Articulo tratamiento',
-            contenido='Este material trata de un video muy importante',
-            tipo='video',
-            url_contenido='https://www.youtube.com/watch?v=qbZ-ye4xoJI&ab_channel=SPCyCCdeCardiolog%C3%ADayCirug%C3%ADaCardiovascular',
-            curso=curso1
-        )
-        article2 = Articulo(
-            titulo='Articulo tratamiento',
-            contenido='Este material trata de un archivo PDF muy importante',
+        db.session.add(curso_kovaltry)
+        db.session.add(curso_jivi)
+
+        articulo_jivi = Articulo(
+            titulo="Phase I study of BAY 94-9027, a PEGylated B-domain-deleted recombinant factor VIII with an extended half-life, in subjects with hemophilia A",
+            contenido='Este material trata de un PDF muy importante',
             tipo='pdf',
-            url_contenido='https://adm.meducatium.com.ar/contenido/articulos/19502270238_1419/pdf/19502270238.pdf',
-            curso=curso1
+            url_contenido='https://archivosemc.s3.amazonaws.com/2.+JIVI%C2%AE+%5Bfactor+antihemofi%CC%81lico+(recombinante)%2C+PEGilado-aucl%5D+polvo+liofilizado.pdf',
+            curso=curso_jivi
         )
-        db.session.add(article1)
-        db.session.add(article2)
+        articulo_jivi_2 = Articulo(
+            titulo='Immunogenicity of long-lasting recombinant factor VIII products',
+            contenido='Este material trata de un PDF muy importante',
+            tipo='pdf',
+            url_contenido='https://archivosemc.s3.amazonaws.com/4.+Immunogenicity+of+long+recombinant.pdf',
+            curso=curso_jivi
+        )
+        db.session.add(articulo_jivi)
+        db.session.add(articulo_jivi_2)
         db.session.commit()
 
-        data_example_article_2 = {
-            "titulo": "Examen de Prueba",
+        data_examen_jivi_1 = {
+            "titulo": "Examen JIVI 1",
             "preguntas": [
                 {
-                    "enunciado": "¿Cuál es la capital de Francia?",
-                    "opcion_a": "Madrid",
-                    "opcion_b": "París",
-                    "opcion_c": "Berlín",
-                    "opcion_d": "Lisboa",
+                    "enunciado": "¿Qué han sugerido los estudios observacionales en pacientes con hemofilia A con respecto a la terapia profiláctica de reemplazo de factor?",
+                    "opcion_a": "Es menos eficaz que el tratamiento a demanda para prevenir episodios de sangrado articular.",
+                    "opcion_b": "Es más eficaz que el tratamiento a demanda para prevenir episodios de sangrado articular y retardar la progresión de la artropatía.",
+                    "opcion_c": "No tiene diferencia significativa respecto al tratamiento a demanda para episodios de sangrado articular.",
+                    "opcion_d": "",
                     "respuesta_correcta": "B",
-                    "explicacion": "Es la respuesta porque si"
+                    "explicacion": "Es más eficaz que el tratamiento a demanda para prevenir episodios de sangrado articular y retardar la progresión de la artropatía."
                 },
                 {
-                    "enunciado": "¿Cuál es el resultado de 200+2?",
-                    "opcion_a": "202",
-                    "opcion_b": "65000",
-                    "opcion_c": "5777777",
-                    "opcion_d": "6222222222",
-                    "respuesta_correcta": "A",
-                    "explicacion": "Es la respuesta porque si y así es"
+                    "enunciado": "¿Cuáles son algunos de los desafíos de la profilaxis en la práctica diaria?",
+                    "opcion_a": "Bajo coste y facilidad de venopunción",
+                    "opcion_b": "Alto costo, dificultades con la venopunción y complicaciones de los dispositivos de acceso venoso.",
+                    "opcion_c": "No se reportaron desafíos significativos.",
+                    "opcion_d": "",
+                    "respuesta_correcta": "B",
+                    "explicacion": "Alto costo, dificultades con la venopunción y complicaciones de los dispositivos de acceso venoso."
+                },
+                {
+                    "enunciado": "¿Cuál es un beneficio potencial de una terapia de reemplazo de FVIII con una vida media más larga?",
+                    "opcion_a": "Podría aumentar la frecuencia de los intervalos de tratamiento.",
+                    "opcion_b": "Podría reducir las cargas asociadas con la profilaxis y mejorar los resultados clínicos.",
+                    "opcion_c": "Podría hacer que la profilaxis requiera más tiempo.",
+                    "opcion_d": "",
+                    "respuesta_correcta": "B",
+                    "explicacion": "Podría reducir las cargas asociadas con la profilaxis y mejorar los resultados clínicos."
+                },
+                {
+                    "enunciado": "¿Qué hicieron Mei et al. describen en su estudio sobre la PEGilación del FVIII?",
+                    "opcion_a": "Un método que utiliza metilación de lisina que disminuyó la actividad de coagulación.",
+                    "opcion_b": "Una estrategia novedosa que utiliza mutagénesis dirigida al sitio para modificar BDD-rFVIII. ",
+                    "opcion_c": "Un método ineficaz para prolongar la vida media del FVIII.",
+                    "opcion_d": "",
+                    "respuesta_correcta": "B",
+                    "explicacion": "Una estrategia novedosa que utiliza mutagénesis dirigida para modificar BDD-rFVIII."
+                },
+                {
+                    "enunciado": "¿Cuál fue el resultado del primer estudio en humanos de BAY 94-9027 con respecto a la seguridad?",
+                    "opcion_a": "Varios sujetos desarrollaron anticuerpos inhibidores contra el FVIII.",
+                    "opcion_b": "BAY 94-9027 fue bien tolerado y no se detectaron anticuerpos inhibidores o no inhibidores.",
+                    "opcion_c": "Se observaron cambios significativos en los parámetros de laboratorio clínico.",
+                    "opcion_d": "",
+                    "respuesta_correcta": "B",
+                    "explicacion": "BAY 94-9027 fue bien tolerado y no se detectaron anticuerpos inhibidores o no inhibidores."
                 }
             ]
         }
 
-        data_example_article_1 = {
-            "titulo": "Examen Articulo 2",
+        data_examen_jivi_2 = {
+            "titulo": "Examen JIVI Immunogenicity of long-lasting recombinant factor VIII products",
             "preguntas": [
                 {
-                    "enunciado": "Ejemplo de enunciado 1",
-                    "opcion_a": "AAAAAAAAAAAA"*4,
-                    "opcion_b": "BBBBBBBBBBBB"*4,
-                    "opcion_c": "CCCCCCCCCCCC"*4,
-                    "opcion_d": "DDDDDDDDDDDD"*4,
+                    "enunciado": "¿Cuál ha sido uno de los principales beneficios del factor terapéutico VIII (FVIII) de nueva generación para los pacientes con hemofilia A?",
+                    "opcion_a": "Ha eliminado la necesidad de cualquier tratamiento profiláctico.",
+                    "opcion_b": "Ha mejorado significativamente la calidad de vida de los pacientes hemofílicos.",
+                    "opcion_c": "Ha reducido la aparición de infecciones virales en los pacientes.",
+                    "opcion_d": "",
                     "respuesta_correcta": "B",
-                    "explicacion": "Es la respuesta porque si"
+                    "explicacion": "Ha mejorado significativamente la calidad de vida de los pacientes hemofílicos."
                 },
                 {
-                    "enunciado": "Ejemplo de enunciado 1",
-                    "opcion_a": "DDDDDDDDDDD" * 4,
-                    "opcion_b": "FFFFFFFF" * 4,
-                    "opcion_c": "NNNNNNNNN" * 4,
-                    "opcion_d": "TTTTTTTTT" * 4,
-                    "respuesta_correcta": "C",
-                    "explicacion": "Es la respuesta porque si"
+                    "enunciado": "¿Cuál es un desafío importante asociado con la corta vida media del FVIII?",
+                    "opcion_a": "Requiere administraciones frecuentes, lo que lleva a una adherencia limitada del paciente.",
+                    "opcion_b": "Provoca una mayor inmunogenicidad y efectos secundarios más graves. ",
+                    "opcion_c": "Conduce a un mayor riesgo de infecciones virales debido a la dosificación frecuente. ",
+                    "opcion_d": "",
+                    "respuesta_correcta": "A",
+                    "explicacion": "Requiere administraciones frecuentes, lo que lleva a una adherencia limitada del paciente."
                 },
+                {
+                    "enunciado": "¿Qué estrategia se menciona para extender la vida media del FVIII terapéutico?",
+                    "opcion_a": "Acoplamiento de FVIII a fragmentos Fc diméricos de inmunoglobulina G humana.",
+                    "opcion_b": "Aumentar la frecuencia de dosificación de las infusiones de FVIII. ",
+                    "opcion_c": "Utilizar únicamente infusiones de sangre total y crioprecipitado. ",
+                    "opcion_d": "",
+                    "respuesta_correcta": "A",
+                    "explicacion": "Acoplamiento de FVIII a fragmentos Fc diméricos de inmunoglobulina G humana."
+                },
+                {
+                    "enunciado": "¿Qué porcentaje de pacientes con hemofilia A grave desarrollan anticuerpos IgG anti-FVIII después de la terapia de reemplazo?",
+                    "opcion_a": "Hasta el 10%.",
+                    "opcion_b": "Hasta el 20%.",
+                    "opcion_c": "Hasta el 30%.",
+                    "opcion_d": "",
+                    "respuesta_correcta": "C",
+                    "explicacion": "Hasta el 30%."
+                },
+                {
+                    "enunciado": "¿Cuál es un problema potencial con el uso de polietilenglicol (PEG) en productos de FVIII?",
+                    "opcion_a": " El PEG es altamente antigénico y provoca reacciones inmunitarias graves.",
+                    "opcion_b": "El PEG puede provocar alteraciones histológicas en diversos órganos debido a su acumulación.",
+                    "opcion_c": "PEG no afecta la vida media del FVIII de manera significativa.",
+                    "opcion_d": "",
+                    "respuesta_correcta": "B",
+                    "explicacion": "El PEG puede provocar alteraciones histológicas en diversos órganos debido a su acumulación"
+                }
             ]
         }
 
-        crear_examen(article2.id, data_example_article_2)
-        crear_examen(article1.id, data_example_article_1)
+        crear_examen(articulo_jivi.id, data_examen_jivi_1)
+        crear_examen(articulo_jivi_2.id, data_examen_jivi_2)
 
 
 def connect_and_execute(query):
