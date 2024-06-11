@@ -502,7 +502,7 @@ def send_exam_results():
 
 
 @app.route('/exam_result', methods=['GET'])
-def get_examen():
+def exam_result():
     exam_result_obj = ResultadoExamen.query.get_or_404(int(request.args.get('exam_result_id')))
     if exam_result_obj:
         return jsonify({
