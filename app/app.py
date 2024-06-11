@@ -423,16 +423,15 @@ def check_correct_answer(question_id: int) -> str:
 class Score:
     def __init__(self, questions: list, exam_id: int, user_email: str, elapsed_time: int):
         self.questions = questions
+        self.results_id = None
         self.exam = Examen.query.get_or_404(exam_id)
         self.user_email = user_email
         self.elapsed_time = elapsed_time//60
         self.final_score = 0
-
         exam_result = self.validate_questions()
         self.exam_result = exam_result
         self.final_score = exam_result.get('points')
         self.save_score()
-        self.results_id = None
 
     def save_score(self):
         """
@@ -490,6 +489,7 @@ class Score:
         }
 
 
+
 @app.route('/send_exam_results', methods=['POST'])
 def send_exam_results():
     data = request.json
@@ -498,6 +498,7 @@ def send_exam_results():
     exam_id = data.get('examId')
     user_email = data.get('userEmail')
     score = Score(questions=exam_results, exam_id=exam_id, user_email=user_email, elapsed_time=elapsed_time)
+    print(score.results_id)
     return jsonify({'exam_results_id': score.results_id})
 
 
