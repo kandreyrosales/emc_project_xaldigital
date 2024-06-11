@@ -1,3 +1,4 @@
+import datetime
 import json
 import os
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
@@ -430,12 +431,14 @@ class Score:
         if last_exam_result:
             last_exam_result.tiempo_total = self.elapsed_time
             last_exam_result.puntaje = self.final_score
+            last_exam_result.fecha_realizacion = datetime.datetime.now()
         else:
             resultado = ResultadoExamen(
                 usuario_email=self.user_email,
                 examen_id=self.exam.id,
                 tiempo_total=self.elapsed_time,
-                puntaje=self.final_score
+                puntaje=self.final_score,
+                fecha_realizacion=datetime.datetime.now()
             )
             db.session.add(resultado)
         db.session.commit()
