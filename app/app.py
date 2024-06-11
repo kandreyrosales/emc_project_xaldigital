@@ -64,7 +64,7 @@ class Articulo(db.Model):
 class Examen(db.Model):
     __tablename__ = 'examen'
     id = db.Column(db.Integer, primary_key=True)
-    titulo = db.Column(db.String(100), nullable=False)
+    titulo = db.Column(db.Text, nullable=False)
     articulo_id = db.Column(db.Integer, db.ForeignKey('articulo.id', ondelete='CASCADE'))
     articulo = db.relationship('Articulo', backref=db.backref('examenes', lazy=True))
 
@@ -74,9 +74,9 @@ class Pregunta(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     enunciado = db.Column(db.Text, nullable=False)
     opcion_a = db.Column(db.Text, nullable=False)
-    opcion_b = db.Column(db.Text, nullable=False)
-    opcion_c = db.Column(db.Text, nullable=False)
-    opcion_d = db.Column(db.Text, nullable=False)
+    opcion_b = db.Column(db.Text, nullable=False, default='Ninguna')
+    opcion_c = db.Column(db.Text, nullable=False, default='Ninguna')
+    opcion_d = db.Column(db.Text, nullable=False, default='Ninguna')
     respuesta_correcta = db.Column(db.String(1), nullable=False)  # 'A', 'B', 'C', 'D'
     explicacion = db.Column(db.Text, nullable=True)
     examen_id = db.Column(db.Integer, db.ForeignKey('examen.id', ondelete='CASCADE'))
