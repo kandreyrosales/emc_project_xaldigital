@@ -424,14 +424,16 @@ class Score:
         """
         Si ya existe un resultado anteror, entonces lo actualizamos con el ultimo puntaje y tiempo obtenido
         """
-        last_exam_result = ResultadoExamen.query.filter_by(usuario_email=self.user_email, exam_id=self.exam.id).first()
+        last_exam_result = ResultadoExamen.query.filter_by(
+            usuario_email=self.user_email,
+            examen_id=self.exam.id).first()
         if last_exam_result:
             last_exam_result.tiempo_total = self.elapsed_time
             last_exam_result.puntaje = self.final_score
         else:
             resultado = ResultadoExamen(
                 usuario_email=self.user_email,
-                exam_id=self.exam.id,
+                examen_id=self.exam.id,
                 tiempo_total=self.elapsed_time,
                 puntaje=self.final_score
             )
