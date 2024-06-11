@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import json
 import os
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
@@ -88,7 +88,7 @@ class ResultadoExamen(db.Model):
     usuario_email = db.Column(db.String(255), nullable=False)
     examen_id = db.Column(db.Integer, db.ForeignKey('examen.id', ondelete='CASCADE'), nullable=False)
     puntaje = db.Column(db.Float, nullable=False)
-    fecha_realizacion = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
+    fecha_realizacion = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     tiempo_total = db.Column(db.Integer, nullable=False)
     examen = db.relationship('Examen', backref=db.backref('resultados_examen', lazy=True))
 
@@ -431,7 +431,7 @@ class Score:
         if last_exam_result:
             last_exam_result.tiempo_total = self.elapsed_time
             last_exam_result.puntaje = self.final_score
-            last_exam_result.fecha_realizacion = datetime.datetime.now
+            last_exam_result.fecha_realizacion = datetime.utcnow
         else:
             resultado = ResultadoExamen(
                 usuario_email=self.user_email,
