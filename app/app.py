@@ -93,6 +93,16 @@ class ResultadoExamen(db.Model):
     examen = db.relationship('Examen', backref=db.backref('resultados_examen', lazy=True))
 
 
+class PuntajeUsuarioExtra(db.Model):
+    """
+    Este modelo sirve para guardar puntaje cuando el usuario lea un PDF o termine un video, etc.
+    """
+    __tablename__ = 'puntaje_usuario'
+    id = db.Column(db.Integer, primary_key=True)
+    usuario_email = db.Column(db.String(255), nullable=False)
+    puntaje_acual = db.Column(db.Float, nullable=False)
+
+
 def crear_examen(articulo_id, data_exam: dict):
 
     titulo = data_exam.get('titulo')
@@ -480,7 +490,5 @@ def send_exam_results():
     elapsed_time = data.get('elapsedTime')
     exam_id = data.get('examId')
     user_email = data.get('userEmail')
-
     score = Score(questions=exam_results, exam_id=exam_id, user_email=user_email, elapsed_time=elapsed_time)
-
     return jsonify({'message': score.exam_result})
