@@ -386,5 +386,5 @@ def get_question():
 
 @app.route('/send_exam_results', methods=['POST'])
 def send_exam_results():
-    result = request.json
+    result = request.json.get('exam_results')
     return jsonify({'message': [data for data in result]})
