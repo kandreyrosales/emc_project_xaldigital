@@ -88,7 +88,7 @@ class ResultadoExamen(db.Model):
     usuario_email = db.Column(db.String(255), nullable=False)
     examen_id = db.Column(db.Integer, db.ForeignKey('examen.id', ondelete='CASCADE'), nullable=False)
     puntaje = db.Column(db.Float, nullable=False)
-    fecha_realizacion = db.Column(db.DateTime, nullable=False)
+    fecha_realizacion = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
     tiempo_total = db.Column(db.Integer, nullable=False)
     examen = db.relationship('Examen', backref=db.backref('resultados_examen', lazy=True))
 
@@ -431,14 +431,13 @@ class Score:
         if last_exam_result:
             last_exam_result.tiempo_total = self.elapsed_time
             last_exam_result.puntaje = self.final_score
-            last_exam_result.fecha_realizacion = datetime.datetime.now()
+            last_exam_result.fecha_realizacion = datetime.datetime.now
         else:
             resultado = ResultadoExamen(
                 usuario_email=self.user_email,
                 examen_id=self.exam.id,
                 tiempo_total=self.elapsed_time,
-                puntaje=self.final_score,
-                fecha_realizacion=datetime.datetime.now()
+                puntaje=self.final_score
             )
             db.session.add(resultado)
         db.session.commit()
