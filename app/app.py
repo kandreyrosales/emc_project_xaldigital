@@ -459,9 +459,9 @@ class Score:
         db.session.commit()
 
     def validate_questions(self):
-        question_dict = {}
         valid_answers = 0
         invalid_answers = 0
+        json_list = []
         total_questions = len(self.questions)
         for question in self.questions:
             question_id = question.get('questionId')
@@ -469,20 +469,20 @@ class Score:
             user_option_selected = question.get('optionSelectedValue')
             if user_option_selected == question_obj.respuesta_correcta:
                 valid_answers += 1
-                question_dict[question_obj.id] = {
+                json_list.append({
                     'enunciado_pregunta': question_obj.enunciado,
                     'respuesta_correcta': question_obj.respuesta_correcta,
                     'respuesta': 'correcta'
-                }
+                })
             else:
                 invalid_answers += 1
-                question_dict[question_obj.id] = {
+                json_list.append({
                     'enunciado_pregunta': question_obj.enunciado,
                     'respuesta_correcta': check_correct_answer(question_id=question_id),
                     'respuesta': 'incorrecta'
-                }
+                })
         return {
-            'questions': question_dict,
+            'questions': json_list,
             'valid_questions': valid_answers,
             'invalid_questions': invalid_answers,
             'points': (valid_answers/total_questions)*100
