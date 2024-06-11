@@ -432,6 +432,7 @@ class Score:
         self.exam_result = exam_result
         self.final_score = exam_result.get('points')
         self.save_score()
+        self.results_id = None
 
     def save_score(self):
         """
@@ -445,6 +446,7 @@ class Score:
             last_exam_result.puntaje = self.final_score
             last_exam_result.fecha_realizacion = datetime.utcnow
             last_exam_result.respuestas = self.exam_result
+            self.results_id = last_exam_result.id
         else:
             resultado = ResultadoExamen(
                 usuario_email=self.user_email,
@@ -453,6 +455,7 @@ class Score:
                 puntaje=self.final_score,
                 respuestas=self.exam_result
             )
+            self.results_id = resultado.id
             db.session.add(resultado)
         db.session.commit()
 
@@ -495,4 +498,4 @@ def send_exam_results():
     exam_id = data.get('examId')
     user_email = data.get('userEmail')
     score = Score(questions=exam_results, exam_id=exam_id, user_email=user_email, elapsed_time=elapsed_time)
-    return jsonify({'results_id': score.exam_result})
+    return jsonify({'exam_results_id': score.results_id})
