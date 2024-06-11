@@ -1,3 +1,4 @@
+import json
 import os
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -385,6 +386,5 @@ def get_question():
 
 @app.route('/send_exam_results', methods=['POST'])
 def send_exam_results():
-    print('send_exam_results')
-    print(request.form.get('exam_results'))
-    return jsonify({'message': 'Examen finalizado!.'})
+    result = request.form.get('exam_results')
+    return jsonify({'message': [data.get('questionId') for data in json.loads(result)]})
