@@ -388,4 +388,4 @@ def get_question():
 def send_exam_results():
     result = request.form.get('exam_results')
     print(result)
-    return jsonify({'message': [data.get('questionId') for data in json.loads(result)]})
+    return jsonify({'message': result})
