@@ -446,6 +446,7 @@ class Score:
         question_dict = {}
         valid_answers = 0
         invalid_answers = 0
+        total_questions = len(self.questions)
         for question in self.questions:
             question_id = question.get('questionId')
             question_obj = Pregunta.query.get_or_404(question_id)
@@ -468,7 +469,7 @@ class Score:
             'questions': question_dict,
             'valid_questions': valid_answers,
             'invalid_questions': invalid_answers,
-            'points': valid_answers*10
+            'points': (valid_answers/total_questions)*100
         }
 
 
