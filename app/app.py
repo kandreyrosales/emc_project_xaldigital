@@ -499,3 +499,14 @@ def send_exam_results():
     user_email = data.get('userEmail')
     score = Score(questions=exam_results, exam_id=exam_id, user_email=user_email, elapsed_time=elapsed_time)
     return jsonify({'exam_results_id': score.results_id})
+
+
+@app.route('/exam_result', methods=['GET'])
+def get_examen():
+    exam_result_obj = ResultadoExamen.query.get_or_404(int(request.args.get('exam_result_id')))
+    if exam_result_obj:
+        return jsonify({
+            'id': exam_result_obj.id,
+            'result_responses': exam_result_obj.respuestas,
+        })
+    return jsonify({})
