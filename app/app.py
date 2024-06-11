@@ -160,11 +160,7 @@ def insert_initial_data():
     create_tables()
     with app.app_context():
         especializacion_cardio = Especializacion(nombre='Cardio Neumología')
-        especializacion_2 = Especializacion(nombre='Especializacion 2')
-        especializacion_3 = Especializacion(nombre='Especializacion 3')
         db.session.add(especializacion_cardio)
-        db.session.add(especializacion_2)
-        db.session.add(especializacion_3)
         hipertension = BloqueCurso(nombre="Hipertensión Pulmonar",
                                    especializacion=especializacion_cardio,
                                    contenido="Este curso intensivo le brinda una comprensión profunda de la HTP, "
