@@ -3,6 +3,7 @@ import json
 import os
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import JSON
 
 
 db_username = os.getenv("db_username")
@@ -91,6 +92,7 @@ class ResultadoExamen(db.Model):
     fecha_realizacion = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     tiempo_total = db.Column(db.Integer, nullable=False)
     examen = db.relationship('Examen', backref=db.backref('resultados_examen', lazy=True))
+    respuestas = db.Column(JSON)
 
 
 class PuntajeUsuarioExtra(db.Model):
@@ -427,9 +429,9 @@ class Score:
         self.final_score = 0
 
         exam_result = self.validate_questions()
+        self.exam_result = exam_result
         self.final_score = exam_result.get('points')
         self.save_score()
-        self.exam_result = exam_result
 
     def save_score(self):
         """
@@ -442,12 +444,14 @@ class Score:
             last_exam_result.tiempo_total = self.elapsed_time
             last_exam_result.puntaje = self.final_score
             last_exam_result.fecha_realizacion = datetime.utcnow
+            last_exam_result.respuestas = self.exam_result
         else:
             resultado = ResultadoExamen(
                 usuario_email=self.user_email,
                 examen_id=self.exam.id,
                 tiempo_total=self.elapsed_time,
-                puntaje=self.final_score
+                puntaje=self.final_score,
+                respuestas=self.exam_result
             )
             db.session.add(resultado)
         db.session.commit()
@@ -491,4 +495,4 @@ def send_exam_results():
     exam_id = data.get('examId')
     user_email = data.get('userEmail')
     score = Score(questions=exam_results, exam_id=exam_id, user_email=user_email, elapsed_time=elapsed_time)
-    return jsonify({'message': score.exam_result})
+    return jsonify({'results_id': score.exam_result})
