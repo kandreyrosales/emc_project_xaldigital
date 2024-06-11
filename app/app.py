@@ -81,6 +81,17 @@ class Pregunta(db.Model):
     examen = db.relationship('Examen', backref=db.backref('preguntas', lazy=True))
 
 
+class ResultadoExamen(db.Model):
+    __tablename__ = 'resultado_examen'
+    id = db.Column(db.Integer, primary_key=True)
+    usuario_email = db.Column(db.String(255), nullable=False)
+    examen_id = db.Column(db.Integer, db.ForeignKey('examen.id', ondelete='CASCADE'), nullable=False)
+    puntaje = db.Column(db.Float, nullable=False)
+    fecha_realizacion = db.Column(db.DateTime, nullable=False)
+    tiempo_total = db.Column(db.Integer, nullable=False)
+    examen = db.relationship('Examen', backref=db.backref('resultados_examen', lazy=True))
+
+
 def crear_examen(articulo_id, data_exam: dict):
 
     titulo = data_exam.get('titulo')
@@ -384,7 +395,89 @@ def get_question():
     })
 
 
+def check_correct_answer(question_id: int) -> str:
+    pregunta = Pregunta.query.get_or_404(question_id)
+    if pregunta.respuesta_correcta == 'A':
+        return pregunta.opcion_a
+    elif pregunta.respuesta_correcta == 'B':
+        return pregunta.opcion_b
+    elif pregunta.respuesta_correcta == 'C':
+        return pregunta.opcion_c
+    else:
+        return pregunta.opcion_d
+
+
+class Score:
+    def __init__(self, questions: list, exam_id: int, user_email: str, elapsed_time: int):
+        self.questions = questions
+        self.exam = Examen.query.get_or_404(exam_id)
+        self.user_email = user_email
+        self.elapsed_time = elapsed_time//60
+        self.final_score = 0
+
+        exam_result = self.validate_questions()
+        self.final_score = exam_result.get('points')
+        self.save_score()
+        self.exam_result = exam_result
+
+    def save_score(self):
+        """
+        Si ya existe un resultado anteror, entonces lo actualizamos con el ultimo puntaje y tiempo obtenido
+        """
+        last_exam_result = ResultadoExamen.query.filter_by(user_email=self.user_email, exam_id=self.exam.id).first()
+        if last_exam_result:
+            last_exam_result.tiempo_total = self.elapsed_time
+            last_exam_result.puntaje = self.final_score
+        else:
+            resultado = ResultadoExamen(
+                user_email=self.user_email,
+                exam_id=self.exam.id,
+                tiempo_total=self.elapsed_time,
+                puntaje=self.final_score
+            )
+            db.session.add(resultado)
+        db.session.commit()
+
+    def validate_questions(self):
+        question_dict = {}
+        json_result_list = []
+        valid_answers = 0
+        invalid_answers = 0
+        for question in self.questions:
+            question_id = question.get('questionId')
+            question_obj = Pregunta.query.get_or_404(question_id)
+            user_option_selected = question.get('optionSelectedValue')
+            if user_option_selected == question_obj.respuesta_correcta:
+                valid_answers += 1
+                question_dict[question_obj.id] = {
+                    'enunciado_pregunta': question_obj.enunciado,
+                    'respuesta_correcta': question_obj.respuesta_correcta,
+                    'respuesta': 'correcta'
+                }
+            else:
+                invalid_answers += 1
+                question_dict[question_obj.id] = {
+                    'enunciado_pregunta': question_obj.enunciado,
+                    'respuesta_correcta': check_correct_answer(question_id=question_id),
+                    'respuesta': 'incorrecta'
+                }
+            json_result_list.append(question_dict)
+        return {
+            'questions': json_result_list,
+            'valid_questions': valid_answers,
+            'invalid_questions': invalid_answers,
+            'points': valid_answers*10
+        }
+
+
 @app.route('/send_exam_results', methods=['POST'])
 def send_exam_results():
-    result = request.json
-    return jsonify({'message': result})
+    data = request.json
+    exam_results = data.get('exam_results')
+    elapsed_time = data.get('elapsedTime')
+    exam_id = data.get('examId')
+    user_email = data.get('userEmail')
+
+    score = Score(questions=exam_results, exam_id=exam_id, user_email=user_email, elapsed_time=elapsed_time)
+
+    return jsonify({'message': score.exam_result})
