@@ -625,30 +625,32 @@ def usuario_realizo_todos_los_examenes_de_curso(email_usuario:str, cursos):
 def calculate_badges():
     email = request.args.get('userEmail')
     badges = []
-    if ResultadoExamen.query.filter_by(usuario_email=email).count() >= 1:
+    resultado_examen = ResultadoExamen.query.filter_by(usuario_email=email).first()
+    if resultado_examen:
         badges.append({
             "name": "Principiante",
             "description": "Has completado tu primer examen!",
             "level": 1
         })
-    # Listar cursos por usuario
-    cursos = listar_cursos_por_usuario(email)
-    if usuario_realizo_todos_los_examenes_de_curso(email, cursos):
-        badges.append({
-            "name": "Estudioso",
-            "description": "Has completado todos los examenes de un curso!",
-            "level": 2
-        })
-
-    tiempo_record = ResultadoExamen.query.filter(
-        ResultadoExamen.usuario_email == email,
-        ResultadoExamen.tiempo_total >= 20000).first()
-    if tiempo_record:
-        badges.append({
-            "name": "Ágil",
-            "description": "Has completa una prueba en menos de 10 minutos!",
-            "level": 3
-        })
+    if resultado_examen:
+        # Listar cursos por usuario
+        cursos = listar_cursos_por_usuario(email)
+        if usuario_realizo_todos_los_examenes_de_curso(email, cursos):
+            badges.append({
+                "name": "Estudioso",
+                "description": "Has completado todos los examenes de un curso!",
+                "level": 2
+            })
+    if resultado_examen:
+        tiempo_record = ResultadoExamen.query.filter(
+            ResultadoExamen.usuario_email == email,
+            ResultadoExamen.tiempo_total >= 20000).first()
+        if tiempo_record:
+            badges.append({
+                "name": "Ágil",
+                "description": "Has completa una prueba en menos de 10 minutos!",
+                "level": 3
+            })
     return jsonify(badges)
 
 
