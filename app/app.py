@@ -689,4 +689,21 @@ def calculate_badges():
         "percentage_text": f"{percentage_text}%"
     })
 
-['{"questionId":1,"optionSelectedValue":"A"}']
+
+@app.route('/progress_chart_data', methods=['GET'])
+def progress_chart_data():
+    email = request.args.get('userEmail')
+    result_exams = ResultadoExamen.query.filter_by(usuario_email=email).all()
+    chart_data_points = []
+    chart_data_labels = []
+    for result_exam in result_exams:
+        chart_data_points.append(result_exam.puntaje)
+        chart_data_labels.append(result_exam.examen.titulo)
+    return jsonify({
+        "chart_data_points": chart_data_points,
+        "chart_data_labels": chart_data_labels
+    })
+
+
+
+
