@@ -652,9 +652,10 @@ def calculate_badges():
                 "description": "Has completado una prueba en menos de 10 minutos!",
                 "level": 3
             })
+    percentage_text = int((len(badges)/total_badges)*100)
     return jsonify({
         "badges": badges,
         "total_badges": len(badges),
         "percentage_badge_score": len(badges)/total_badges,
-        "percentage_text": f"{(len(badges)/total_badges)*100}%"
+        "percentage_text": f"{percentage_text}%"
     })
