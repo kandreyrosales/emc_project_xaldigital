@@ -355,17 +355,45 @@ def get_especialty(especializacion_nombre: str):
     return especializacion_query
 
 
+def percentage_course_finished(email_usuario:str, cursos: list):
+    total_courses = len(cursos)
+    exams_finished = 0
+    for curso in cursos:
+        curso_id = curso.id
+        # Obtener todos los exámenes del curso
+        examenes_curso = db.session.query(Examen.id).join(Articulo).filter(
+            Articulo.curso_id == curso_id
+        ).all()
+        examenes_curso_ids = {examen.id for examen in examenes_curso}
+
+        # Obtener todos los exámenes realizados por el usuario
+        examenes_usuario = db.session.query(ResultadoExamen.examen_id).filter_by(
+            usuario_email=email_usuario
+        ).all()
+        examenes_usuario_ids = {examen.examen_id for examen in examenes_usuario}
+
+        # Verificar si todos los exámenes del curso fueron realizados por el usuario
+        todos_exámenes_realizados = examenes_curso_ids.issubset(examenes_usuario_ids)
+        if todos_exámenes_realizados:
+            exams_finished += 1
+    return exams_finished/total_courses if total_courses else 0
+
+
 @app.route('/list_blocks', methods=['GET'])
 def list_blocks():
     especializacion_nombre = request.args.get('especializacion_nombre')
+    user_email = request.args.get('userEmail')
     especializacion_query = get_especialty(especializacion_nombre=especializacion_nombre)
     bloques_json = []
     if especializacion_query:
         for bloque in especializacion_query.bloques_curso:
+            percentage_completed = percentage_course_finished(cursos=bloque.cursos, email_usuario=user_email)
             bloques_json.append({
                 "nombre": bloque.nombre,
                 "id": bloque.id,
-                "contenido": bloque.contenido
+                "contenido": bloque.contenido,
+                "porcentaje_completado": percentage_completed,
+                "porcentaje_completado_texto": f"{int(percentage_completed*100)}%"
             })
     return jsonify(bloques_json)
 
