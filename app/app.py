@@ -95,14 +95,16 @@ class ResultadoExamen(db.Model):
     respuestas = db.Column(JSON)
 
 
-class PuntajeUsuarioExtra(db.Model):
+class PuntajeUsuarioExtraArticulos(db.Model):
     """
     Este modelo sirve para guardar puntaje cuando el usuario lea un PDF o termine un video, etc.
     """
     __tablename__ = 'puntaje_usuario'
     id = db.Column(db.Integer, primary_key=True)
     usuario_email = db.Column(db.String(255), nullable=False)
-    puntaje_acual = db.Column(db.Float, nullable=False)
+    puntaje = db.Column(db.Float, nullable=False)
+    articulo_id = db.Column(db.Integer, db.ForeignKey('articulo.id', ondelete='CASCADE'))
+    articulo = db.relationship('Articulo', backref=db.backref('puntajes_usuario', lazy=True))
 
 
 def crear_examen(articulo_id, data_exam: dict):
@@ -564,3 +566,31 @@ def exam_result():
             'total_questions': len(exam_result_obj.respuestas.get('questions'))
         })
     return jsonify({})
+
+
+@app.route('/extra_points', methods=['POST'])
+def extra_points():
+    data = request.json
+    tipo_contenido = data.get('typeArticle')
+    articulo_id = data.get('articleId')
+    email = data.get('userEmail')
+    if tipo_contenido == "video":
+        puntaje = 100
+    else:
+        puntaje = 60
+    ultimo_puntaje = PuntajeUsuarioExtraArticulos.query.filter_by(
+        usuario_email=email, articulo_id=articulo_id).first()
+    if not ultimo_puntaje:
+        puntaje_usuario = PuntajeUsuarioExtraArticulos(
+            usuario_email=email,
+            articulo_id=articulo_id,
+            puntaje=puntaje
+        )
+        db.session.add(puntaje_usuario)
+        db.session.commit()
+        return jsonify({"message": f'Ganaste {puntaje} puntos por acceder a este contenido!', "extrapoints": True})
+    return jsonify({"message": 'Ya tienes puntos por este contenido', "extrapoints": False})
+
+
+
+
