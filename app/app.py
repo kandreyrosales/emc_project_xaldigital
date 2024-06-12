@@ -625,6 +625,7 @@ def usuario_realizo_todos_los_examenes_de_curso(email_usuario:str, cursos):
 def calculate_badges():
     email = request.args.get('userEmail')
     badges = []
+    total_badges = 30
     resultado_examen = ResultadoExamen.query.filter_by(usuario_email=email).first()
     if resultado_examen:
         badges.append({
@@ -648,12 +649,12 @@ def calculate_badges():
         if tiempo_record:
             badges.append({
                 "name": "Ágil",
-                "description": "Has completa una prueba en menos de 10 minutos!",
+                "description": "Has completado una prueba en menos de 10 minutos!",
                 "level": 3
             })
-    return jsonify(badges)
-
-
-
-
-
+    return jsonify({
+        "badges": badges,
+        "total_badges": len(badges),
+        "percentage_badge_score": len(badges)/total_badges,
+        "percentage_text": f"{len(badges)/total_badges}%"
+    })
