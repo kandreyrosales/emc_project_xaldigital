@@ -501,6 +501,7 @@ class Score:
             last_exam_result.puntaje = self.final_score
             last_exam_result.fecha_realizacion = datetime.utcnow()
             last_exam_result.respuestas = self.exam_result
+            db.session.commit()
             self.results_id = last_exam_result.id
         else:
             resultado = ResultadoExamen(
@@ -510,9 +511,9 @@ class Score:
                 puntaje=self.final_score,
                 respuestas=self.exam_result
             )
-            self.results_id = resultado.id
             db.session.add(resultado)
-        db.session.commit()
+            db.session.commit()
+            self.results_id = resultado.id
 
     def validate_questions(self):
         valid_answers = 0
@@ -659,3 +660,5 @@ def calculate_badges():
         "percentage_badge_score": len(badges)/total_badges if badges else 0,
         "percentage_text": f"{percentage_text}%"
     })
+
+['{"questionId":1,"optionSelectedValue":"A"}']
