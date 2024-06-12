@@ -705,5 +705,20 @@ def progress_chart_data():
     })
 
 
+@app.route('/total_points', methods=['GET'])
+def total_points():
+    """
+    Cantidad de puntos por Exmanen + Puntos extras por leer los articulos
+    """
+    email = request.args.get('userEmail')
+    result_exams = ResultadoExamen.query.filter_by(usuario_email=email).all()
+    total_points_exam = sum(exam_point.puntaje for exam_point in result_exams)
+    result_extra_points = PuntajeUsuarioExtraArticulos.query.filter_by(usuario_email=email).all()
+    total_points_extra_points = sum(extra_point.puntaje for extra_point in result_extra_points)
+    return jsonify({
+        "total_points": int(total_points_exam + total_points_extra_points),
+    })
+
+
 
 
