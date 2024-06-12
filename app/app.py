@@ -570,25 +570,26 @@ def exam_result():
 
 @app.route('/extra_points', methods=['POST'])
 def extra_points():
-    data = request.json
-    tipo_contenido = data.get('typeArticle')
-    articulo_id = data.get('articleId')
-    email = data.get('userEmail')
-    if tipo_contenido == "video":
-        puntaje = 100
-    else:
-        puntaje = 60
-    ultimo_puntaje = PuntajeUsuarioExtraArticulos.query.filter_by(
-        usuario_email=email, articulo_id=articulo_id).first()
-    if not ultimo_puntaje:
-        puntaje_usuario = PuntajeUsuarioExtraArticulos(
-            usuario_email=email,
-            articulo_id=articulo_id,
-            puntaje=puntaje
-        )
-        db.session.add(puntaje_usuario)
-        db.session.commit()
-        return jsonify({"message": f'Ganaste {puntaje} puntos por acceder a este contenido!', "extrapoints": True})
+    # data = request.json
+    # tipo_contenido = data.get('typeArticle')
+    # articulo_id = data.get('articleId')
+    # email = data.get('userEmail')
+    # if tipo_contenido == "video":
+    #     puntaje = 100
+    # else:
+    #     puntaje = 60
+    # ultimo_puntaje = PuntajeUsuarioExtraArticulos.query.filter_by(
+    #     usuario_email=email, articulo_id=articulo_id).first()
+    # if not ultimo_puntaje:
+    #     puntaje_usuario = PuntajeUsuarioExtraArticulos(
+    #         usuario_email=email,
+    #         articulo_id=articulo_id,
+    #         puntaje=puntaje
+    #     )
+    #     db.session.add(puntaje_usuario)
+    #     db.session.commit()
+    #     return jsonify({"message": f'Ganaste {puntaje} puntos por acceder a este contenido!', "extrapoints": True})
+    # return jsonify({"message": 'Ya tienes puntos por este contenido', "extrapoints": False})
     return jsonify({"message": 'Ya tienes puntos por este contenido', "extrapoints": False})
 
 
