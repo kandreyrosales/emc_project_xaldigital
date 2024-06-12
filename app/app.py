@@ -656,5 +656,5 @@ def calculate_badges():
         "badges": badges,
         "total_badges": len(badges),
         "percentage_badge_score": len(badges)/total_badges,
-        "percentage_text": f"{len(badges)/total_badges}%"
+        "percentage_text": f"{(len(badges)/total_badges)*100}%"
     })
