@@ -699,6 +699,9 @@ def progress_chart_data():
     for result_exam in result_exams:
         chart_data_points.append(result_exam.puntaje)
         chart_data_labels.append(result_exam.examen.titulo[:10])
+    if not chart_data_labels:
+        chart_data_labels = [""]
+        chart_data_points = [0]
     return jsonify({
         "chart_data_points": chart_data_points,
         "chart_data_labels": chart_data_labels
