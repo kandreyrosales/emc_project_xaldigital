@@ -373,9 +373,10 @@ def percentage_course_finished(email_usuario:str, cursos: list):
         examenes_usuario_ids = {examen.examen_id for examen in examenes_usuario}
 
         # Verificar si todos los exámenes del curso fueron realizados por el usuario
-        todos_exámenes_realizados = examenes_curso_ids.issubset(examenes_usuario_ids)
-        if todos_exámenes_realizados:
-            exams_finished += 1
+        if examenes_usuario:
+            todos_examenes_realizados = examenes_curso_ids.issubset(examenes_usuario_ids)
+            if todos_examenes_realizados:
+                exams_finished += 1
     return exams_finished/total_courses if total_courses else 0
 
 
