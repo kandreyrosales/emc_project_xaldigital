@@ -364,6 +364,8 @@ def percentage_course_finished(email_usuario:str, cursos: list):
         examenes_curso = db.session.query(Examen.id).join(Articulo).filter(
             Articulo.curso_id == curso_id
         ).all()
+        if not examenes_curso:
+            continue
         examenes_curso_ids = {examen.id for examen in examenes_curso}
 
         # Obtener todos los exámenes realizados por el usuario
