@@ -188,19 +188,125 @@ def insert_initial_data():
             nombre="JIVI (DAMOCTOCOG ALFA PEGOL)",
             bloque_curso=hemofilia_bloque,
             contenido="Este curso es intermedio")
+        db.session.add(curso_jivi)
         curso_kovaltry = Curso(
             nombre="KOVALTRY (OCTOCOG ALFA)",
             bloque_curso=hemofilia_bloque,
             contenido="Este curso es inicial")
-        db.session.add(curso_jivi)
         db.session.add(curso_kovaltry)
-
         # curso Hipertension pulmonar
         curso_hipertension = Curso(
             nombre="Hipertensión Pulmonar",
             bloque_curso=hipertension_bloque,
             contenido="Este curso es inicial")
         db.session.add(curso_hipertension)
+
+        # articulos KOVALTRY
+        articulo_kovaltry = Articulo(
+            titulo="Factor VIII q3 tarjeton famacocinética",
+            contenido='PDF sobre Factor VIII q3 tarjeton famacocinética',
+            tipo='pdf',
+            url_contenido='https://archivosemc.s3.amazonaws.com/FactorVIII+Q3+Tarjeton+Farmacocinetica_HIGH.pdf',
+            curso=curso_kovaltry
+        )
+        data_examen_kovaltry_1 = {
+            "titulo": "Examen Factor VIII q3 tarjeton famacocinética",
+            "preguntas": [
+                {
+                    "enunciado": "¿Cuál es la principal ventaja de Kovaltry® sobre Advate® en términos de vida media de la actividad de FVIII?",
+                    "opcion_a": "Kovaltry® reduce la vida media en un 23%.",
+                    "opcion_b": "Kovaltry® prolonga la vida media en un 23%.",
+                    "opcion_c": "Kovaltry® no afecta la vida media de FVIII.",
+                    "respuesta_correcta": "B",
+                    "explicacion": ""
+                },
+                {
+                    "enunciado": "¿Cuánto incrementa Kovaltry® la mediana del tiempo de actividad de FVIII >1 U/dl respecto de Advate®?",
+                    "opcion_a": "10-12 horas",
+                    "opcion_b": "18-20 horas",
+                    "opcion_c": "25-30 horas",
+                    "respuesta_correcta": "B",
+                    "explicacion": ""
+                },
+                {
+                    "enunciado": "¿En cuántas veces incrementa Kovaltry® la proporción de personas con hemofilia A grave que mantienen actividad de FVIII >1 U/dl en comparación con Advate®?",
+                    "opcion_a": "1.5 veces",
+                    "opcion_b": "2.0 veces",
+                    "opcion_c": "2.67 veces",
+                    "respuesta_correcta": "C",
+                    "explicacion": ""
+                },
+                {
+                    "enunciado": "¿Cuál es la relación de la dosis requerida de Kovaltry® para mantener la actividad de FVIII >1 U/dl respecto a Advate® cuando se administra dos veces por semana?",
+                    "opcion_a": "0.33",
+                    "opcion_b": "0.50",
+                    "opcion_c": "0.67",
+                    "respuesta_correcta": "A",
+                    "explicacion": ""
+                },
+                {
+                    "enunciado": "Según los estudios citados, ¿cuál es el porcentaje de personas con hemofilia A grave que mantienen actividad de FVIII >1 U/dl con Kovaltry®?",
+                    "opcion_a": "18.4%",
+                    "opcion_b": "49.2%",
+                    "opcion_c": "74.5%",
+                    "respuesta_correcta": "B",
+                    "explicacion": ""
+                },
+            ]
+        }
+
+        articulo_kovaltry_2 = Articulo(
+            titulo="Factor VIII q4 latest taurus",
+            contenido='PDF sobre Factor VIII q4 latest taurus',
+            tipo='pdf',
+            url_contenido='https://archivosemc.s3.amazonaws.com/FactorVIII+Q4+Latest+Taurus.pdf',
+            curso=curso_kovaltry
+        )
+        data_examen_kovaltry_2 = {
+            "titulo": "Examen Factor VIII q4 latest taurus",
+            "preguntas": [
+                {
+                    "enunciado": "¿Cuál fue el objetivo principal del estudio de fase IV TAURUS?",
+                    "opcion_a": "Investigar la efectividad de un nuevo medicamento para la hemofilia",
+                    "opcion_b": "Evaluar los regímenes de profilaxis con Kovaltry® en la práctica clínica diaria en individuos con hemofilia A moderada-grave.",
+                    "opcion_c": "Comparar los efectos secundarios de Kovaltry® con otros tratamientos para la diabetes.",
+                    "respuesta_correcta": "B",
+                    "explicacion": ""
+                },
+                {
+                    "enunciado": "¿Qué proporción de sujetos con hemofilia A tratados con ≤2 infusiones semanales aumentó después de 12 meses de tratamiento con Kovaltry®?",
+                    "opcion_a": "De 27% a 38%",
+                    "opcion_b": "De 30% a 45%",
+                    "opcion_c": "De 20% a 35%",
+                    "respuesta_correcta": "A",
+                    "explicacion": ""
+                },
+                {
+                    "enunciado": "¿Cuál fue el perfil de seguridad de Kovaltry® en el estudio TAURUS?",
+                    "opcion_a": "56 eventos adversos emergentes al tratamiento en 18% de los participantes.",
+                    "opcion_b": "70 eventos adversos graves en 50% de los participantes.",
+                    "opcion_c": "No se reportaron eventos adversos.",
+                    "respuesta_correcta": "A",
+                    "explicacion": ""
+                },
+                {
+                    "enunciado": "¿Qué ventaja se observó en la profilaxis con Kovaltry® respecto a la satisfacción y adherencia al tratamiento?",
+                    "opcion_a": "Reducción en la satisfacción de los pacientes.",
+                    "opcion_b": "Altos niveles de satisfacción y adherencia al tratamiento.",
+                    "opcion_c": "No hubo cambios en la satisfacción y adherencia al tratamiento.",
+                    "respuesta_correcta": "B",
+                    "explicacion": ""
+                },
+                {
+                    "enunciado": "¿Cuál es el beneficio del perfil farmacocinético de Kovaltry® en comparación con productos estándar de FVIII como Kogenate® y Advate®?",
+                    "opcion_a": "Menor tiempo de actividad del FVIII por encima del umbral >1 U/dl.",
+                    "opcion_b": "Mayor tiempo de actividad del FVIII por encima del umbral >1 U/dl.",
+                    "opcion_c": "No hay diferencia en el tiempo de actividad del FVIII.",
+                    "respuesta_correcta": "B",
+                    "explicacion": ""
+                }
+            ]
+        }
 
         # articulos JIVI (DAMOCTOCOG ALFA PEGOL)
         articulo_jivi = Articulo(
@@ -475,11 +581,15 @@ def insert_initial_data():
         }
 
         db.session.add(articulo_jivi)
+        db.session.add(articulo_kovaltry)
+        db.session.add(articulo_kovaltry_2)
         db.session.add(articulo_jivi_2)
         db.session.add(articulo_hipertension_1)
         db.session.add(articulo_hipertension_2)
         db.session.add(articulo_hipertension_3)
 
+        crear_examen(articulo_kovaltry.id, data_examen_kovaltry_1)
+        crear_examen(articulo_kovaltry_2.id, data_examen_kovaltry_2)
         crear_examen(articulo_jivi.id, data_examen_jivi_1)
         crear_examen(articulo_jivi_2.id, data_examen_jivi_2)
         crear_examen(articulo_hipertension_1.id, data_examen_hipertension_1)
