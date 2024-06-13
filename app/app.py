@@ -161,35 +161,48 @@ def insert_initial_data():
     drop_tables()
     create_tables()
     with app.app_context():
+        # Por ahora tendremos dos especialidades
         especializacion_cardio = Especializacion(nombre='Cardio Neumología')
+        especializacion_hematologia = Especializacion(nombre='Hematología')
         db.session.add(especializacion_cardio)
-        hipertension = BloqueCurso(nombre="Hipertensión Pulmonar",
-                                   especializacion=especializacion_cardio,
-                                   contenido="Este curso intensivo le brinda una comprensión profunda de la HTP, "
-                                             "una condición compleja que afecta los pulmones. Explore las causas, "
-                                             "la clasificación, el diagnóstico y las opciones de tratamiento, "
-                                             "incluyendo medicamentos, procedimientos quirúrgicos y cuidados de apoyo.")
-        hemofilia = BloqueCurso(
-            nombre="Comprenda a fondo la Hemofilia",
+        db.session.add(especializacion_hematologia)
+
+        # Bloques
+        hipertension_bloque = BloqueCurso(
+            nombre="Hipertensión Pulmonar",
             especializacion=especializacion_cardio,
+            contenido="Este curso intensivo le brinda una comprensión profunda de la HTP, "
+                      "una condición compleja que afecta los pulmones. Explore las causas, "
+                      "la clasificación, el diagnóstico y las opciones de tratamiento, "
+                      "incluyendo medicamentos, procedimientos quirúrgicos y cuidados de apoyo.")
+        hemofilia_bloque = BloqueCurso(
+            nombre="Comprenda a fondo la Hemofilia",
+            especializacion=especializacion_hematologia,
             contenido="Mejore su comprensión de esta condición compleja para brindar "
                       "una atención informada a los pacientes.")
+        db.session.add(hipertension_bloque)
+        db.session.add(hemofilia_bloque)
 
-        db.session.add(hipertension)
-        db.session.add(hemofilia)
-
-        curso_kovaltry = Curso(
-            nombre="KOVALTRY (OCTOCOG ALFA)",
-            bloque_curso=hemofilia,
-            contenido="Este curso es inicial")
+        # cursos HEMOFILIA
         curso_jivi = Curso(
             nombre="JIVI (DAMOCTOCOG ALFA PEGOL)",
-            bloque_curso=hemofilia,
+            bloque_curso=hemofilia_bloque,
             contenido="Este curso es intermedio")
-
-        db.session.add(curso_kovaltry)
+        curso_kovaltry = Curso(
+            nombre="KOVALTRY (OCTOCOG ALFA)",
+            bloque_curso=hemofilia_bloque,
+            contenido="Este curso es inicial")
         db.session.add(curso_jivi)
+        db.session.add(curso_kovaltry)
 
+        # curso Hipertension pulmonar
+        curso_hipertension = Curso(
+            nombre="Hipertensión Pulmonar",
+            bloque_curso=hipertension_bloque,
+            contenido="Este curso es inicial")
+        db.session.add(curso_hipertension)
+
+        # articulos JIVI (DAMOCTOCOG ALFA PEGOL)
         articulo_jivi = Articulo(
             titulo="recombinant factor VIII with an extended half-life, in subjects with hemophilia A",
             contenido='Este material trata de un PDF muy importante',
@@ -197,17 +210,6 @@ def insert_initial_data():
             url_contenido='https://archivosemc.s3.amazonaws.com/2.+JIVI%C2%AE+%5Bfactor+antihemofi%CC%81lico+(recombinante)%2C+PEGilado-aucl%5D+polvo+liofilizado.pdf',
             curso=curso_jivi
         )
-        articulo_jivi_2 = Articulo(
-            titulo='Immunogenicity of long-lasting recombinant factor VIII products',
-            contenido='Este material trata de un PDF muy importante',
-            tipo='pdf',
-            url_contenido='https://archivosemc.s3.amazonaws.com/4.+Immunogenicity+of+long+recombinant.pdf',
-            curso=curso_jivi
-        )
-        db.session.add(articulo_jivi)
-        db.session.add(articulo_jivi_2)
-        db.session.commit()
-
         data_examen_jivi_1 = {
             "titulo": "Examen JIVI 1",
             "preguntas": [
@@ -253,7 +255,13 @@ def insert_initial_data():
                 }
             ]
         }
-
+        articulo_jivi_2 = Articulo(
+            titulo='Immunogenicity of long-lasting recombinant factor VIII products',
+            contenido='Este material trata de un PDF muy importante',
+            tipo='pdf',
+            url_contenido='https://archivosemc.s3.amazonaws.com/4.+Immunogenicity+of+long+recombinant.pdf',
+            curso=curso_jivi
+        )
         data_examen_jivi_2 = {
             "titulo": "Examen JIVI Immunogenicity of long-lasting recombinant factor VIII products",
             "preguntas": [
@@ -300,8 +308,184 @@ def insert_initial_data():
             ]
         }
 
+        # articulos Hipertension pulmonar
+        articulo_hipertension_1 = Articulo(
+            titulo="E-Detailing Compendium Adempas 2023",
+            contenido='PDF sobre E-Detailing Compendium Adempas 2023',
+            tipo='pdf',
+            url_contenido='https://archivosemc.s3.amazonaws.com/E-Detailing+Compendium+Adempas+2023+(Aprobada).pdf',
+            curso=curso_hipertension
+        )
+        data_examen_hipertension_1 = {
+            "titulo": "Examen JIVI 1",
+            "preguntas": [
+                {
+                    "enunciado": "¿Qué estimula el riociguat?",
+                    "opcion_a": "Guanilato ciclasa soluble",
+                    "opcion_b": "Guanilito ciclasa insoluble",
+                    "opcion_c": "Ninguna de las anteriores",
+                    "opcion_d": "Todas las anteriores",
+                    "respuesta_correcta": "A",
+                    "explicacion": ""
+                },
+                {
+                    "enunciado": "¿Qué es la GCs?",
+                    "opcion_a": "Enzima que se encuentra en las células endoteliales de las arterias pulmonares",
+                    "opcion_b": "Enzima que se encuentra en las céulas endoteliales de las arterias cardiacas",
+                    "opcion_c": "Molécula que se encuentra en las células sanguíneas",
+                    "opcion_d": "Todas las anteriores",
+                    "respuesta_correcta": "A",
+                    "explicacion": ""
+                },
+                {
+                    "enunciado": "¿Cuales son algunas de las determinantes de progresión o estimadores de moralidad a 1 año?",
+                    "opcion_a": "Marcadores bioquimicos, síncope, capadidad de ejercicio y evaluación de hemodinámica",
+                    "opcion_b": "IMC, anemia, capacidad de ejercicio",
+                    "opcion_c": "Test neurológico, hemodinámica y marcadores hepáticos",
+                    "opcion_d": "Todas las anteriores",
+                    "respuesta_correcta": "A",
+                    "explicacion": ""
+                },
+                {
+                    "enunciado": "DPC6M 165-440m, BNP 50-800 ng/L, FEVD 37-54% y IVS 31-38 son caracteristicas de un paciente con riesgo",
+                    "opcion_a": "Intermedio",
+                    "opcion_b": "Bajo",
+                    "opcion_c": "Alto",
+                    "opcion_d": "Todas las anteriores",
+                    "respuesta_correcta": "A",
+                    "explicacion": ""
+                },
+                {
+                    "enunciado": "Falla cardiaca derecha ausente, DPC6M >440m, BNP <50 ng/L, FEVD >54% y IVS >38 son caracteristicas de un paciente con riesgo",
+                    "opcion_a": "Bajo",
+                    "opcion_b": "Intermedio",
+                    "opcion_c": "Alto",
+                    "opcion_d": "Todas las anteriores",
+                    "respuesta_correcta": "A",
+                    "explicacion": ""
+                },
+            ]
+        }
+        articulo_hipertension_2 = Articulo(
+            titulo="HIPERTENSIÓN PULMONAR TROMBOEMBOLICA (HTPEC)",
+            contenido='Video sobre HIPERTENSIÓN PULMONAR TROMBOEMBOLICA (HTPEC)',
+            tipo='video',
+            url_contenido='https://archivosemc.s3.amazonaws.com/Resphirablastos+Tratamiento+en+HTPEC+(Dra.+N.Zayas).mp4',
+            curso=curso_hipertension
+        )
+        data_examen_hipertension_2 = {
+            "titulo": "Examen HIPERTENSIÓN PULMONAR TROMBOEMBOLICA (HTPEC)",
+            "preguntas": [
+                {
+                    "enunciado": "¿Cual es una de las carácterísticas patológcas de la HPTEPC?",
+                    "opcion_a": "Material tromboembólico organizado y remodelación vascular por combinación de angiogenesis defectusa y disfucnión endotelial",
+                    "opcion_b": "Material tromboembólico desorganizado por combinación de disfunción epitelial",
+                    "opcion_c": "Material tromboembólico por mala alimentación y estilo de vida poco saludable",
+                    "opcion_d": "Todas las anteriores",
+                    "respuesta_correcta": "A",
+                    "explicacion": ""
+                },
+                {
+                    "enunciado": "¿Cual es una de las principales diferencias entre enfermedad tromnboembolica sin hipertensión pulmonar y con hipertensión pulmonar?",
+                    "opcion_a": "Disnea en el descanso",
+                    "opcion_b": "Disnea en el ejercicio",
+                    "opcion_c": "Periodo de tratamiento con anticoagulantes",
+                    "opcion_d": "Todas las anteriores",
+                    "respuesta_correcta": "A",
+                    "explicacion": ""
+                },
+                {
+                    "enunciado": "¿El gamagrama es la prueba definitoria para diagnosticar a los pacientes con HPTEC?",
+                    "opcion_a": "No, se debe tener sus reservas y complementar con otros estudios",
+                    "opcion_b": "Sí, es la prueba diagnóstica por excelencia",
+                    "opcion_c": "El gamagrama no se debe hacer en pacientes con sospecha de HPTEC",
+                    "opcion_d": "Todas las anteriores",
+                    "respuesta_correcta": "A",
+                    "explicacion": ""
+                },
+                {
+                    "enunciado": "Características para diferenciar la enfermedad cuando es aguda",
+                    "opcion_a": "Infartos pulmonares y oclusión total",
+                    "opcion_b": "Defectos periféricos",
+                    "opcion_c": "Atenuación en mosaico",
+                    "opcion_d": "Todas las anteriores",
+                    "respuesta_correcta": "A",
+                    "explicacion": ""
+                },
+                {
+                    "enunciado": "Características para diferenciar la enfermedad cuando es crónica",
+                    "opcion_a": "Vasos colaterales y calcificación",
+                    "opcion_b": "Oclusión total",
+                    "opcion_c": "Defectos centrales",
+                    "opcion_d": "Todas las anteriores",
+                    "respuesta_correcta": "A",
+                    "explicacion": ""
+                },
+            ]
+        }
+
+        articulo_hipertension_3 = Articulo(
+            titulo="HIPERTENSIÓN ARTERIAL PULMONAR (HAP)",
+            contenido='Video sobre HIPERTENSIÓN ARTERIAL PULMONAR (HAP)',
+            tipo='video',
+            url_contenido='https://archivosemc.s3.amazonaws.com/Resphirablastos+Tratamiento+HP+(Dr.T.Pulido).mp4',
+            curso=curso_hipertension
+        )
+        data_examen_hipertension_3 = {
+            "titulo": "Examen HIPERTENSIÓN ARTERIAL PULMONAR (HAP)",
+            "preguntas": [
+                {
+                    "enunciado": "Son Criterios para diagnoticar HAP",
+                    "opcion_a": "HP precapilar: PAPm >20mmHg, PCP < 15mmHg y RVP > 2 UV",
+                    "opcion_b": "Presión pulmonar media normal 14 +/- 3.3 mmHg",
+                    "opcion_c": "HP precapilar: PAPm <20mmHg, PCP > 15mmHg y RVP < 2 UV",
+                    "opcion_d": "Todas las anteriores",
+                    "respuesta_correcta": "A",
+                    "explicacion": ""
+                },
+                {
+                    "enunciado": "La HAP es progresiva, por lo tanto, de fase asintomática a fase terminal los síntomas son",
+                    "opcion_a": "Aumento en la poscarga del VD, remodelamiento del miocardio hasta la falla cardiaca derecha aguda",
+                    "opcion_b": "Aumento en el estrés de la pared del VD, falla cardiaca aguda hasta la dilatación del VD e insuficiencia cardiaca",
+                    "opcion_c": "Insuficiencia cardiaca, aumento en el estrés de la pared del VD hasta la falla cardiaca aguda",
+                    "opcion_d": "Todas las anteriores",
+                    "respuesta_correcta": "A",
+                    "explicacion": ""
+                },
+                {
+                    "enunciado": "De acuerdo a la estratificación del riesgo, los pacientes con riesgo alto presentan",
+                    "opcion_a": "Signos de IC derecha, síncope repetido, progresión de síntomas rápida, PAD: >14 mmHg",
+                    "opcion_b": "Síncope ocasional, derrame pericárdico mínimo, PAD: 8-14mmHG",
+                    "opcion_c": "PAD: <8 mmHg, signos de IC derecha ausentes, BNP <50ng/L",
+                    "opcion_d": "Todas las anteriores",
+                    "respuesta_correcta": "A",
+                    "explicacion": ""
+                },
+                {
+                    "enunciado": "Para los pacientes con riesgo intermedio alto o alto se debe tratar de la siguiente manera",
+                    "opcion_a": "Agregar APC i.v.  S..c y/o evaluar para trasplante pulmonar",
+                    "opcion_b": "Continuar con tratamiento inicial",
+                    "opcion_c": "Cambiar de iPDE5 a sGCs",
+                    "opcion_d": "Todas las anteriores",
+                    "respuesta_correcta": "A",
+                    "explicacion": ""
+                },
+
+            ]
+        }
+
+        db.session.add(articulo_jivi)
+        db.session.add(articulo_jivi_2)
+        db.session.add(articulo_hipertension_1)
+        db.session.add(articulo_hipertension_2)
+        db.session.add(articulo_hipertension_3)
+
         crear_examen(articulo_jivi.id, data_examen_jivi_1)
         crear_examen(articulo_jivi_2.id, data_examen_jivi_2)
+        crear_examen(articulo_hipertension_1.id, data_examen_hipertension_1)
+        crear_examen(articulo_hipertension_2.id, data_examen_hipertension_2)
+        crear_examen(articulo_hipertension_3.id, data_examen_hipertension_3)
+        db.session.commit()
 
 
 def connect_and_execute(query):
