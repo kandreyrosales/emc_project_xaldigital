@@ -216,7 +216,6 @@ def insert_initial_data():
                     "opcion_a": "Es menos eficaz que el tratamiento a demanda para prevenir episodios de sangrado articular.",
                     "opcion_b": "Es más eficaz que el tratamiento a demanda para prevenir episodios de sangrado articular y retardar la progresión de la artropatía.",
                     "opcion_c": "No tiene diferencia significativa respecto al tratamiento a demanda para episodios de sangrado articular.",
-                    "opcion_d": "D",
                     "respuesta_correcta": "B",
                     "explicacion": "Es más eficaz que el tratamiento a demanda para prevenir episodios de sangrado articular y retardar la progresión de la artropatía."
                 },
@@ -225,7 +224,6 @@ def insert_initial_data():
                     "opcion_a": "Bajo coste y facilidad de venopunción",
                     "opcion_b": "Alto costo, dificultades con la venopunción y complicaciones de los dispositivos de acceso venoso.",
                     "opcion_c": "No se reportaron desafíos significativos.",
-                    "opcion_d": "D",
                     "respuesta_correcta": "B",
                     "explicacion": "Alto costo, dificultades con la venopunción y complicaciones de los dispositivos de acceso venoso."
                 },
@@ -234,7 +232,6 @@ def insert_initial_data():
                     "opcion_a": "Podría aumentar la frecuencia de los intervalos de tratamiento.",
                     "opcion_b": "Podría reducir las cargas asociadas con la profilaxis y mejorar los resultados clínicos.",
                     "opcion_c": "Podría hacer que la profilaxis requiera más tiempo.",
-                    "opcion_d": "D",
                     "respuesta_correcta": "B",
                     "explicacion": "Podría reducir las cargas asociadas con la profilaxis y mejorar los resultados clínicos."
                 },
@@ -243,7 +240,6 @@ def insert_initial_data():
                     "opcion_a": "Un método que utiliza metilación de lisina que disminuyó la actividad de coagulación.",
                     "opcion_b": "Una estrategia novedosa que utiliza mutagénesis dirigida al sitio para modificar BDD-rFVIII. ",
                     "opcion_c": "Un método ineficaz para prolongar la vida media del FVIII.",
-                    "opcion_d": "D",
                     "respuesta_correcta": "B",
                     "explicacion": "Una estrategia novedosa que utiliza mutagénesis dirigida para modificar BDD-rFVIII."
                 },
@@ -252,7 +248,6 @@ def insert_initial_data():
                     "opcion_a": "Varios sujetos desarrollaron anticuerpos inhibidores contra el FVIII.",
                     "opcion_b": "BAY 94-9027 fue bien tolerado y no se detectaron anticuerpos inhibidores o no inhibidores.",
                     "opcion_c": "Se observaron cambios significativos en los parámetros de laboratorio clínico.",
-                    "opcion_d": "D",
                     "respuesta_correcta": "B",
                     "explicacion": "BAY 94-9027 fue bien tolerado y no se detectaron anticuerpos inhibidores o no inhibidores."
                 }
@@ -267,7 +262,6 @@ def insert_initial_data():
                     "opcion_a": "Ha eliminado la necesidad de cualquier tratamiento profiláctico.",
                     "opcion_b": "Ha mejorado significativamente la calidad de vida de los pacientes hemofílicos.",
                     "opcion_c": "Ha reducido la aparición de infecciones virales en los pacientes.",
-                    "opcion_d": "D",
                     "respuesta_correcta": "B",
                     "explicacion": "Ha mejorado significativamente la calidad de vida de los pacientes hemofílicos."
                 },
@@ -276,7 +270,6 @@ def insert_initial_data():
                     "opcion_a": "Requiere administraciones frecuentes, lo que lleva a una adherencia limitada del paciente.",
                     "opcion_b": "Provoca una mayor inmunogenicidad y efectos secundarios más graves. ",
                     "opcion_c": "Conduce a un mayor riesgo de infecciones virales debido a la dosificación frecuente. ",
-                    "opcion_d": "D",
                     "respuesta_correcta": "A",
                     "explicacion": "Requiere administraciones frecuentes, lo que lleva a una adherencia limitada del paciente."
                 },
@@ -285,7 +278,6 @@ def insert_initial_data():
                     "opcion_a": "Acoplamiento de FVIII a fragmentos Fc diméricos de inmunoglobulina G humana.",
                     "opcion_b": "Aumentar la frecuencia de dosificación de las infusiones de FVIII. ",
                     "opcion_c": "Utilizar únicamente infusiones de sangre total y crioprecipitado. ",
-                    "opcion_d": "D",
                     "respuesta_correcta": "A",
                     "explicacion": "Acoplamiento de FVIII a fragmentos Fc diméricos de inmunoglobulina G humana."
                 },
@@ -294,7 +286,6 @@ def insert_initial_data():
                     "opcion_a": "Hasta el 10%.",
                     "opcion_b": "Hasta el 20%.",
                     "opcion_c": "Hasta el 30%.",
-                    "opcion_d": "D",
                     "respuesta_correcta": "C",
                     "explicacion": "Hasta el 30%."
                 },
@@ -303,7 +294,6 @@ def insert_initial_data():
                     "opcion_a": " El PEG es altamente antigénico y provoca reacciones inmunitarias graves.",
                     "opcion_b": "El PEG puede provocar alteraciones histológicas en diversos órganos debido a su acumulación.",
                     "opcion_c": "PEG no afecta la vida media del FVIII de manera significativa.",
-                    "opcion_d": "D",
                     "respuesta_correcta": "B",
                     "explicacion": "El PEG puede provocar alteraciones histológicas en diversos órganos debido a su acumulación"
                 }
