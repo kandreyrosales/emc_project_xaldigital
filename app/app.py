@@ -701,20 +701,37 @@ def progress_chart_data():
     })
 
 
+def get_points(email: str):
+    result_exams = ResultadoExamen.query.filter_by(usuario_email=email).all()
+    total_points_exam = sum(exam_point.puntaje for exam_point in result_exams)
+    result_extra_points = PuntajeUsuarioExtraArticulos.query.filter_by(usuario_email=email).all()
+    total_points_extra_points = sum(extra_point.puntaje for extra_point in result_extra_points)
+    return int(total_points_exam + total_points_extra_points)
+
+
 @app.route('/total_points', methods=['GET'])
 def total_points():
     """
     Cantidad de puntos por Exmanen + Puntos extras por leer los articulos
     """
     email = request.args.get('userEmail')
-    result_exams = ResultadoExamen.query.filter_by(usuario_email=email).all()
-    total_points_exam = sum(exam_point.puntaje for exam_point in result_exams)
-    result_extra_points = PuntajeUsuarioExtraArticulos.query.filter_by(usuario_email=email).all()
-    total_points_extra_points = sum(extra_point.puntaje for extra_point in result_extra_points)
     return jsonify({
-        "total_points": int(total_points_exam + total_points_extra_points),
+        "total_points": get_points(email=email),
     })
 
 
-
-
+@app.route('/user_points', methods=['GET'])
+def user_points():
+    """
+    Cantidad de puntos por Exmanen + Puntos extras por leer los articulos
+    """
+    user_points_list = []
+    emails = db.session.query(ResultadoExamen.usuario_email).distinct().all()
+    if emails:
+        email_list = [email[0] for email in emails]
+        for email in email_list:
+            user_points_list.append({
+                "email": email,
+                "total_points": get_points(email=email)
+            })
+    return jsonify({"users_points": user_points_list})
