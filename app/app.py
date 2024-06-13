@@ -731,7 +731,7 @@ def user_points():
         email_list = [email[0] for email in emails]
         for email in email_list:
             user_points_list.append({
-                "email": email,
+                "email": email.split("@")[0],
                 "total_points": get_points(email=email)
             })
     return jsonify({"users_points": user_points_list})
