@@ -310,14 +310,14 @@ def insert_initial_data():
 
         # articulos JIVI (DAMOCTOCOG ALFA PEGOL)
         articulo_jivi = Articulo(
-            titulo="recombinant factor VIII with an extended half-life, in subjects with hemophilia A",
+            titulo="Recombinant factor VIII with an extended half-life, in subjects with hemophilia A",
             contenido='Este material trata de un PDF muy importante',
             tipo='pdf',
             url_contenido='https://archivosemc.s3.amazonaws.com/2.+JIVI%C2%AE+%5Bfactor+antihemofi%CC%81lico+(recombinante)%2C+PEGilado-aucl%5D+polvo+liofilizado.pdf',
             curso=curso_jivi
         )
         data_examen_jivi_1 = {
-            "titulo": "Examen JIVI 1",
+            "titulo": "Examen Recombinant factor VIII",
             "preguntas": [
                 {
                     "enunciado": "¿Qué han sugerido los estudios observacionales en pacientes con hemofilia A con respecto a la terapia profiláctica de reemplazo de factor?",
