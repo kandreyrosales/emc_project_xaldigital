@@ -682,7 +682,7 @@ def list_blocks():
                 "porcentaje_completado": percentage_completed,
                 "porcentaje_completado_texto": f"{int(percentage_completed*100)}%"
             })
-    return jsonify(bloques_json)
+    return jsonify({"blocks": bloques_json})
 
 
 @app.route('/create_tables_command', methods=['GET'])
