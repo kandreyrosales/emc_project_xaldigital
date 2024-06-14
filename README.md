@@ -19,6 +19,7 @@ Documentación Javascript SDK AWS: https://docs.aws.amazon.com/AWSJavaScriptSDK/
 https://repost.aws/questions/QUiL6x18g9Qk2XJk73Y4sE5A/enabling-cors-on-api-gateway
 
 Modelos de la Aplicación:
+
 ![img.png](img.png)
 
 Este proyecto debe ser desplegado en AWS usando Terraform y el API Gateway debe ser conectado a través de las API Calls de Flutterflow:
