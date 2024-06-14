@@ -29,3 +29,8 @@ Al desplegar el proyecto se debe ejecutar en la ruta de EC2 en el endpoint: http
 Esta petición GET creará las Especializaciones, Exámenes y Bloques necesarios para el prototipo. Las especializaciones iniciales para el prototipo son Cardio Neumología y Hematología.
 
 En la implementación Flask se encuentra toda la lógica para el cálculo de puntos, recompensas, y creación  de preguntas dentro de la base de datos usando SQL Alchemy
+
+Para poder subir archivos de los artículos para los exámenes, 
+hay que crear un Bucket de S3 de forma pública (prototipo) y copiar el link del PDF para Flutterflow pueda leerlo y consumirlo. Por ejemplo:
+
+![img_2.png](img_2.png)
