@@ -26,6 +26,6 @@ Este proyecto debe ser desplegado en AWS usando Terraform y el API Gateway debe 
 ![img_1.png](img_1.png)
 
 Al desplegar el proyecto se debe ejecutar en la ruta de EC2 en el endpoint: http://54.87.52.53:5000/initial_data.
-Esta petición GET creará las Especializaciones, Exámenes y Bloques necesarios para el prototipo. Cardio Neumología y Hematología.
+Esta petición GET creará las Especializaciones, Exámenes y Bloques necesarios para el prototipo. Las especializaciones iniciales para el prototipo son Cardio Neumología y Hematología.
 
 En la implementación Flask se encuentra toda la lógica para el cálculo de puntos, recompensas, y creación  de preguntas dentro de la base de datos usando SQL Alchemy
