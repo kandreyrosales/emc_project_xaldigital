@@ -1021,6 +1021,20 @@ def user_points():
     """
     user_points_list = []
     emails = db.session.query(ResultadoExamen.usuario_email).distinct().all()
+
+    # examenes_curso = db.session.query(Examen.id).join(Articulo).filter(
+    #     Articulo.curso_id == curso_id
+    # ).all()
+    # examenes_curso_ids = {examen.id for examen in examenes_curso}
+    #
+    # # Obtener todos los exámenes realizados por el usuario
+    # examenes_usuario = db.session.query(ResultadoExamen.examen_id).filter_by(
+    #     usuario_email=email_usuario
+    # ).all()
+    # examenes_usuario_ids = {examen.examen_id for examen in examenes_usuario}
+    #
+    # # Verificar si todos los exámenes del curso fueron realizados por el usuario
+    # todos_exámenes_realizados = examenes_curso_ids.issubset(examenes_usuario_ids)
     if emails:
         email_list = [email[0] for email in emails]
         for email in email_list:
